@@ -47,7 +47,7 @@ ex16ec: extraCred.c
 
 clean:
 	rm -f ex1 ex3 ex7 ex8 ex9 ex10 vowel ex11 ex12 ex13 ex14 ex15 ex16 extraCred
-	rm -rf ex1.dSYM ex3.dSYM ex7.dSYM ex8.dSYM ex9.dSYM ex10.dSYM vowel.dSYM ex11.dSYM ex12.dSYM ex13.dSYM ex14.dSYM ex15.dSYM ex16.dSYM extraCred.dSY
+	rm -rf ex1.dSYM ex3.dSYM ex7.dSYM ex8.dSYM ex9.dSYM ex10.dSYM vowel.dSYM ex11.dSYM ex12.dSYM ex13.dSYM ex14.dSYM ex15.dSYM ex16.dSYM extraCred.dSYM
 
 rebuild:
 	clean all
