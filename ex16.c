@@ -61,12 +61,10 @@ int main(int argc, char *argv[])
 
     frank->age += 20;
     frank->weight += 20;
-    free(frank);
     Person_print(frank);
 
     // destroy them both so we clean up
     Person_destroy(joe);
     Person_destroy(frank);
-
     return 0;
 }
