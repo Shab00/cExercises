@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS=-Wall -g -fsanitize=address
+CFLAGS=-Wall -g
 
 all: ex1 ex3 ex7 ex8 ex9 ex10 vowel ex11 ex12 ex13 ex14 ex15ex16 extraCred ex17
 
