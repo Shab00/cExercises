@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS=-Wall -g
 
-all: ex1 ex3 ex7 ex8 ex9 ex10 vowel ex11 ex12 ex13 ex14 ex15ex16 extraCred ex17
+all: ex1 ex3 ex7 ex8 ex9 ex10 vowel ex11 ex12 ex13 ex14 ex15 ex16 extraCred ex17 ex18
 
 ex1: ex1.c
 	$(CC) $(CFLAGS) -o ex1 ex1.c
@@ -48,9 +48,12 @@ extraCred: extraCred.c
 ex17: ex17.c
 	$(CC) $(CFLAGS) -o ex17 ex17.c
 
+ex18: ex18.c
+	$(CC) $(CFLAGS) -o ex18 ex18.c
+
 clean:
-	rm -f ex1 ex3 ex7 ex8 ex9 ex10 vowel ex11 ex12 ex13 ex14 ex15 ex16 extraCred ex17
-	rm -rf ex1.dSYM ex3.dSYM ex7.dSYM ex8.dSYM ex9.dSYM ex10.dSYM vowel.dSYM ex11.dSYM ex12.dSYM ex13.dSYM ex14.dSYM ex15.dSYM ex16.dSYM extraCred.dSYM ex17.dSYM
+	rm -f ex1 ex3 ex7 ex8 ex9 ex10 vowel ex11 ex12 ex13 ex14 ex15 ex16 extraCred ex17 ex18
+	rm -rf ex1.dSYM ex3.dSYM ex7.dSYM ex8.dSYM ex9.dSYM ex10.dSYM vowel.dSYM ex11.dSYM ex12.dSYM ex13.dSYM ex14.dSYM ex15.dSYM ex16.dSYM extraCred.dSYM ex17.dSYM ex18.dSYM
 
 rebuild:
 	clean all
