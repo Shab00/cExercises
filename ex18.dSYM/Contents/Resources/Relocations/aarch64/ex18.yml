@@ -1,0 +1,13 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     ex18
+relocations:
+  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _die, symObjAddr: 0x0, symBinAddr: 0x100003A90, symSize: 0x58 }
+  - { offset: 0x41, size: 0x8, addend: 0x0, symName: _die, symObjAddr: 0x0, symBinAddr: 0x100003A90, symSize: 0x58 }
+  - { offset: 0x65, size: 0x8, addend: 0x0, symName: _bubble_sort, symObjAddr: 0x58, symBinAddr: 0x100003AE8, symSize: 0x164 }
+  - { offset: 0xE1, size: 0x8, addend: 0x0, symName: _sorted_order, symObjAddr: 0x1BC, symBinAddr: 0x100003C4C, symSize: 0x20 }
+  - { offset: 0x117, size: 0x8, addend: 0x0, symName: _reverse_order, symObjAddr: 0x1DC, symBinAddr: 0x100003C6C, symSize: 0x20 }
+  - { offset: 0x14D, size: 0x8, addend: 0x0, symName: _strange_order, symObjAddr: 0x1FC, symBinAddr: 0x100003C8C, symSize: 0x64 }
+  - { offset: 0x183, size: 0x8, addend: 0x0, symName: _test_sorting, symObjAddr: 0x260, symBinAddr: 0x100003CF0, symSize: 0xCC }
+  - { offset: 0x1DF, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x32C, symBinAddr: 0x100003DBC, symSize: 0x130 }
+...
