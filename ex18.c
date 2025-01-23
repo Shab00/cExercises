@@ -19,6 +19,8 @@ void die(const char *message)
 // case for a function pointer
 typedef int (*compare_cb) (int a, int b);
 
+typedef int *(*sort_fn)(int *numbers, int count, compare_cb cmp);
+
 /**
  * A classic bubble sort function that uses the
  * compare_cb to do the sorting.
@@ -48,6 +50,36 @@ int *bubble_sort(int *numbers, int count, compare_cb cmp)
     return target;
 }
 
+int *selection_sort(int *numbers, int count, compare_cb cmp)
+{
+    int i, j, min_idx;
+    int *target = malloc(count * sizeof(int));
+
+    if (!target)
+        die("Memory error.");
+
+    memcpy(target, numbers, count * sizeof(int));
+
+    for (i = 0; i < count - 1; i++) {
+        min_idx = i;
+
+        for (j = i + 1; j < count; j++) {
+            if (cmp(target[j], target[min_idx]) < 0) {
+                min_idx = j;
+            }
+        }
+
+        // Swap the found minimum element with the current element
+        if (min_idx != i) {
+            int temp = target[i];
+            target[i] = target[min_idx];
+            target[min_idx] = temp;
+        }
+    }
+
+    return target;
+}
+
 int sorted_order(int a, int b)
 {
     return a - b;
@@ -71,10 +103,10 @@ int strange_order(int a, int b)
  * Used to test that we are sorting things correctly
  * by doing the sort and printing it out.
  */
-void test_sorting(int *numbers, int count, compare_cb cmp)
+void test_sorting(int *numbers, int count, sort_fn sort, compare_cb cmp)
 {
     int i = 0;
-    int *sorted = bubble_sort(numbers, count, cmp);
+    int *sorted = sort(numbers, count, cmp);
 
     if (!sorted)
         die("Failed to sort as requested.");
@@ -107,10 +139,16 @@ int main(int argc, char *argv[])
         numbers[i] = atoi(inputs[i]);
     }
 
-//    test_sorting(numbers, count, sorted_order);
-    test_sorting(numbers, count, NULL);
-    test_sorting(numbers, count, reverse_order);
-    test_sorting(numbers, count, strange_order);
+
+    printf("Bubble Sort:\n");
+    test_sorting(numbers, count, bubble_sort, sorted_order);
+    test_sorting(numbers, count, bubble_sort, reverse_order);
+    test_sorting(numbers, count, bubble_sort, strange_order);
+
+    printf("Selection Sort:\n");
+    test_sorting(numbers, count, selection_sort, sorted_order);
+    test_sorting(numbers, count, selection_sort, reverse_order);
+    test_sorting(numbers, count, selection_sort, strange_order);
 
     free(numbers);
 
