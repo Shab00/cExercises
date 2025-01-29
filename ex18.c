@@ -43,6 +43,11 @@ int *bubble_sort(int *numbers, int count, compare_cb cmp)
                 target[j] = temp;
             }
         }
+        // Introduce a crash after a few iterations
+        if (i == 2) {
+            int *crash = NULL;
+            *crash = 42; // Dereference a NULL pointer to cause a crash
+        }
     }
 
     return target;
