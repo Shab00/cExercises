@@ -74,6 +74,29 @@ again:    *to++ = *from++;
     return count;
 }
 
+#define GENERATE_DUFFS_DEVICE(UNROLL_FACTOR) \
+void duffs_device_##UNROLL_FACTOR(char *to, char *from, int count) { \
+    int n = (count + (UNROLL_FACTOR - 1)) / UNROLL_FACTOR; \
+    switch (count % UNROLL_FACTOR) { \
+        case 0: do { *to++ = *from++; \
+        case UNROLL_FACTOR - 1: *to++ = *from++; \
+        case UNROLL_FACTOR - 2: *to++ = *from++; \
+        case UNROLL_FACTOR - 3: *to++ = *from++; \
+        case UNROLL_FACTOR - 4: *to++ = *from++; \
+        case UNROLL_FACTOR - 5: *to++ = *from++; \
+        case UNROLL_FACTOR - 6: *to++ = *from++; \
+        case UNROLL_FACTOR - 7: *to++ = *from++; \
+        /* Add more cases if UNROLL_FACTOR > 8 */ \
+        } while (--n > 0); \
+    } \
+}
+
+// Generate a Duff's device-like function with an unroll factor of 8
+GENERATE_DUFFS_DEVICE(8)
+
+// Generate a Duff's device-like function with an unroll factor of 16
+GENERATE_DUFFS_DEVICE(16)
+
 int valid_copy(char *data, int count, char expects)
 {
     int i = 0;
@@ -119,6 +142,19 @@ int main(int argc, char *argv[])
     rc = zeds_device(from, to, 1000);
     check(rc == 1000, "Zed's device failed: %d", rc);
     check(valid_copy(to, 1000, 'x'), "Zed's device failed copy.");
+
+    // Initialize the source buffer with 'x'
+    memset(from, 'x', 1000);
+
+    // Test Duff's device with unroll factor of 8
+    memset(to, 'y', 1000);
+    duffs_device_8(from, to, 1000);
+    printf("Duff's device (unroll 8): %s\n", memcmp(to, from, 1000) == 0 ? "Success" : "Failure");
+
+    // Test Duff's device with unroll factor of 16
+    memset(to, 'y', 1000);
+    duffs_device_16(from, to, 1000);
+    printf("Duff's device (unroll 16): %s\n", memcmp(to, from, 1000) == 0 ? "Success" : "Failure");
 
     return 0;
 error:
