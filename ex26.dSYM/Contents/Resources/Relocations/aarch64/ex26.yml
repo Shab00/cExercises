@@ -2,7 +2,11 @@
 triple:          'arm64-apple-darwin'
 binary-path:     ex26
 relocations:
-  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _search_files, symObjAddr: 0x0, symBinAddr: 0x100003AD8, symSize: 0x260 }
-  - { offset: 0x41, size: 0x8, addend: 0x0, symName: _search_files, symObjAddr: 0x0, symBinAddr: 0x100003AD8, symSize: 0x260 }
-  - { offset: 0x108, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x260, symBinAddr: 0x100003D38, symSize: 0x178 }
+  - { offset: 0x26, size: 0x8, addend: 0x0, symName: _strstr_case_insensitive, symObjAddr: 0x0, symBinAddr: 0x100003170, symSize: 0x168 }
+  - { offset: 0x42, size: 0x8, addend: 0x0, symName: _strstr_case_insensitive, symObjAddr: 0x0, symBinAddr: 0x100003170, symSize: 0x168 }
+  - { offset: 0xB0, size: 0x8, addend: 0x0, symName: _search_files, symObjAddr: 0x168, symBinAddr: 0x1000032D8, symSize: 0x248 }
+  - { offset: 0x195, size: 0x8, addend: 0x0, symName: _search_directory, symObjAddr: 0x3B0, symBinAddr: 0x100003520, symSize: 0x1F4 }
+  - { offset: 0x24E, size: 0x8, addend: 0x0, symName: _load_allowed_files, symObjAddr: 0x5A4, symBinAddr: 0x100003714, symSize: 0x114 }
+  - { offset: 0x2AA, size: 0x8, addend: 0x0, symName: _expand_glob_patterns, symObjAddr: 0x6B8, symBinAddr: 0x100003828, symSize: 0xA0 }
+  - { offset: 0x314, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x758, symBinAddr: 0x1000038C8, symSize: 0x4C0 }
 ...

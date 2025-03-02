@@ -10,6 +10,7 @@
 #define MAX_FILES 100
 #define MAX_LINE_LENGTH 256
 
+// Function to check if a string contains a pattern (case-insensitive)
 int strstr_case_insensitive(const char *haystack, const char *needle, int case_insensitive) {
     if (case_insensitive) {
         while (*haystack) {
@@ -19,16 +20,17 @@ int strstr_case_insensitive(const char *haystack, const char *needle, int case_i
                 h++;
                 n++;
             }
-            if (!*n) return 1;
+            if (!*n) return 1;  // Match found
             haystack++;
         }
     } else {
         return strstr(haystack, needle) != NULL;
     }
-    return 0;
+    return 0;  // No match
 }
 
-int search_files(const char *filename, const char **patterns, int pattern_count,  int case_insensitive, int show_line_numbers, int or_logic) {
+// Function to search a file for patterns
+int search_files(const char *filename, const char **patterns, int pattern_count, int case_insensitive, int show_line_numbers, int or_logic) {
     FILE *file = fopen(filename, "r");
     if (!file) {
         perror("Failed to open file");
@@ -50,16 +52,16 @@ int search_files(const char *filename, const char **patterns, int pattern_count,
                     break;
                 }
             } else if (!or_logic) {
-                match =0;
+                match = 0;
                 break;
             }
         }
-    
+
         if (match) {
             if (show_line_numbers) {
                 printf("%s:%d: %s", filename, line_number, line);
             } else {
-                printf("%s: %s", filename, line); 
+                printf("%s: %s", filename, line);
             }
             found = 1;
         }
@@ -69,6 +71,7 @@ int search_files(const char *filename, const char **patterns, int pattern_count,
     return found;
 }
 
+// Function to recursively search directories
 void search_directory(const char *dirpath, const char **patterns, int pattern_count, int case_insensitive, int show_line_numbers, int or_logic) {
     DIR *dir = opendir(dirpath);
     if (!dir) {
@@ -86,7 +89,7 @@ void search_directory(const char *dirpath, const char **patterns, int pattern_co
         snprintf(path, sizeof(path), "%s/%s", dirpath, entry->d_name);
 
         struct stat statbuf;
-        if (stat(path, &statbuf) == -1) {
+        if (stat(path, &statbuf) {
             perror("Failed to get file status");
             continue;
         }
@@ -101,22 +104,24 @@ void search_directory(const char *dirpath, const char **patterns, int pattern_co
     closedir(dir);
 }
 
+// Function to load allowed log files from a configuration file
 void load_allowed_files(const char *config_path, char **files, int *file_count) {
     FILE *config = fopen(config_path, "r");
     if (!config) {
-        perror("Failed to ope config file");
+        perror("Failed to open config file");
         return;
     }
 
     char line[MAX_LINE_LENGTH];
     while (fgets(line, sizeof(line), config)) {
-        line[strcspn(line, "\n")] = 0;
+        line[strcspn(line, "\n")] = 0;  // Remove newline
         files[(*file_count)++] = strdup(line);
     }
 
     fclose(config);
 }
 
+// Function to expand glob patterns
 void expand_glob_patterns(const char *pattern, char **files, int *file_count) {
     glob_t glob_result;
     glob(pattern, GLOB_TILDE, NULL, &glob_result);
@@ -130,7 +135,7 @@ void expand_glob_patterns(const char *pattern, char **files, int *file_count) {
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s [-i] [-n] [-r] [--or]  <pattern> [pattern2 ...] <file1/dir1> [file2/dir2 ...]\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-i] [-n] [-r] [--or] <pattern1> [pattern2 ...] <file1/dir1> [file2/dir2 ...]\n", argv[0]);
         return 1;
     }
 
@@ -152,22 +157,26 @@ int main(int argc, char *argv[]) {
             show_line_numbers = 1;
         } else if (strcmp(argv[i], "-r") == 0) {
             recursive = 1;
-        } else if (strcmp(argv[i], "--or") == 0 ){
+        } else if (strcmp(argv[i], "--or") == 0) {
             or_logic = 1;
         }
         i++;
     }
 
+    // Parse patterns
     while (i < argc && pattern_count < MAX_PATTERNS) {
         patterns[pattern_count++] = argv[i++];
     }
 
+    // Load allowed log files from configuration
     load_allowed_files("~/.tagfind", files, &file_count);
 
+    // Parse file arguments and expand glob patterns
     while (i < argc && file_count < MAX_FILES) {
         expand_glob_patterns(argv[i++], files, &file_count);
     }
 
+    // Search files/directories
     int any_found = 0;
     for (int j = 0; j < file_count; j++) {
         struct stat statbuf;
@@ -177,18 +186,19 @@ int main(int argc, char *argv[]) {
         }
 
         if (S_ISDIR(statbuf.st_mode) && recursive) {
-            search_directory(files[j], patterns, pattern_count, case_insensitive, show_line_numbers, or_logic); 
+            search_directory(files[j], patterns, pattern_count, case_insensitive, show_line_numbers, or_logic);
         } else if (S_ISREG(statbuf.st_mode)) {
             if (search_files(files[j], patterns, pattern_count, case_insensitive, show_line_numbers, or_logic)) {
                 any_found = 1;
             }
-        }       
+        }
     }
 
     if (!any_found) {
-        printf("No matches found for specified patterns.\n");
+        printf("No matches found for the specified patterns.\n");
     }
-    
+
+    // Free allocated memory
     for (int j = 0; j < file_count; j++) {
         free(files[j]);
     }

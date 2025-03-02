@@ -1,1 +1,8 @@
-this is a test this is a test somthing somthing nothing.
+This project uses the LC25000 dataset, consisting of histopathological images, to classify colon and lung tissues. Machine learning models are trained to identify different tissue types and detect … 
+
+The "Space Titanic" project is a machine learning challenge inspired by the Titanic survival prediction problem, but set in a futuristic space travel scenario. The objective is to predict the survi… 
+
+
+ This project is a chat bot designed to answer questions about UK immigration law. The bot scrapes legislation content from the UK legislation website, processes the data, and uses a vector library …
+
+This project uses the LC25000 dataset, consisting of histopathological images, to classify colon and lung tissues. Machine learning models are trained to identify different tissue types and detect 
