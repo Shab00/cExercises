@@ -5,12 +5,13 @@
 #include <glob.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <pwd.h>  // For getpwuid
 
 #define MAX_PATTERNS 10
 #define MAX_FILES 100
 #define MAX_LINE_LENGTH 256
 
-// Function to check if a string contains a pattern (case-insensitive)
+// Function to perform case-insensitive substring search
 int strstr_case_insensitive(const char *haystack, const char *needle, int case_insensitive) {
     if (case_insensitive) {
         while (*haystack) {
@@ -29,7 +30,7 @@ int strstr_case_insensitive(const char *haystack, const char *needle, int case_i
     return 0;  // No match
 }
 
-// Function to search a file for patterns
+// Function to search for patterns in a file
 int search_files(const char *filename, const char **patterns, int pattern_count, int case_insensitive, int show_line_numbers, int or_logic) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -89,7 +90,7 @@ void search_directory(const char *dirpath, const char **patterns, int pattern_co
         snprintf(path, sizeof(path), "%s/%s", dirpath, entry->d_name);
 
         struct stat statbuf;
-        if (stat(path, &statbuf) {
+        if (stat(path, &statbuf) == -1) {
             perror("Failed to get file status");
             continue;
         }
@@ -115,7 +116,15 @@ void load_allowed_files(const char *config_path, char **files, int *file_count) 
     char line[MAX_LINE_LENGTH];
     while (fgets(line, sizeof(line), config)) {
         line[strcspn(line, "\n")] = 0;  // Remove newline
+        if (*file_count >= MAX_FILES) {
+            fprintf(stderr, "Error: Maximum number of files (%d) exceeded.\n", MAX_FILES);
+            exit(1);
+        }
         files[(*file_count)++] = strdup(line);
+        if (!files[(*file_count) - 1]) {
+            perror("Failed to allocate memory");
+            exit(1);
+        }
     }
 
     fclose(config);
@@ -124,13 +133,37 @@ void load_allowed_files(const char *config_path, char **files, int *file_count) 
 // Function to expand glob patterns
 void expand_glob_patterns(const char *pattern, char **files, int *file_count) {
     glob_t glob_result;
-    glob(pattern, GLOB_TILDE, NULL, &glob_result);
-
-    for (size_t i = 0; i < glob_result.gl_pathc; i++) {
-        files[(*file_count)++] = strdup(glob_result.gl_pathv[i]);
+    if (glob(pattern, GLOB_TILDE, NULL, &glob_result) == 0) {
+        for (size_t i = 0; i < glob_result.gl_pathc; i++) {
+            if (*file_count >= MAX_FILES) {
+                fprintf(stderr, "Error: Maximum number of files (%d) exceeded.\n", MAX_FILES);
+                exit(1);
+            }
+            files[(*file_count)++] = strdup(glob_result.gl_pathv[i]);
+            if (!files[(*file_count) - 1]) {
+                perror("Failed to allocate memory");
+                exit(1);
+            }
+        }
     }
-
     globfree(&glob_result);
+}
+
+// Function to expand ~ to the home directory
+const char *expand_home_directory(const char *path) {
+    if (path[0] == '~') {
+        const char *home = getenv("HOME");
+        if (!home) {
+            struct passwd *pw = getpwuid(getuid());
+            if (pw) home = pw->pw_dir;
+        }
+        if (home) {
+            static char expanded_path[MAX_LINE_LENGTH];
+            snprintf(expanded_path, sizeof(expanded_path), "%s%s", home, path + 1);
+            return expanded_path;
+        }
+    }
+    return path;
 }
 
 int main(int argc, char *argv[]) {
@@ -169,39 +202,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Load allowed log files from configuration
-    load_allowed_files("~/.tagfind", files, &file_count);
+    const char *config_path = expand_home_directory("~/.tagfind");
+    load_allowed_files(config_path, files, &file_count);
 
-    // Parse file arguments and expand glob patterns
-    while (i < argc && file_count < MAX_FILES) {
-        expand_glob_patterns(argv[i++], files, &file_count);
-    }
-
-    // Search files/directories
-    int any_found = 0;
-    for (int j = 0; j < file_count; j++) {
-        struct stat statbuf;
-        if (stat(files[j], &statbuf)) {
-            perror("Failed to get file status");
-            continue;
-        }
-
-        if (S_ISDIR(statbuf.st_mode) && recursive) {
-            search_directory(files[j], patterns, pattern_count, case_insensitive, show_line_numbers, or_logic);
-        } else if (S_ISREG(statbuf.st_mode)) {
-            if (search_files(files[j], patterns, pattern_count, case_insensitive, show_line_numbers, or_logic)) {
-                any_found = 1;
-            }
-        }
-    }
-
-    if (!any_found) {
-        printf("No matches found for the specified patterns.\n");
-    }
-
-    // Free allocated memory
-    for (int j = 0; j < file_count; j++) {
-        free(files[j]);
-    }
-
-    return 0;
-}
+    // Parse file arguments and expand
