@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <pwd.h>  // For getpwuid
+#include <unistd.h>  // For getuid()
 
 #define MAX_PATTERNS 10
 #define MAX_FILES 100
@@ -105,31 +106,6 @@ void search_directory(const char *dirpath, const char **patterns, int pattern_co
     closedir(dir);
 }
 
-// Function to load allowed log files from a configuration file
-void load_allowed_files(const char *config_path, char **files, int *file_count) {
-    FILE *config = fopen(config_path, "r");
-    if (!config) {
-        perror("Failed to open config file");
-        return;
-    }
-
-    char line[MAX_LINE_LENGTH];
-    while (fgets(line, sizeof(line), config)) {
-        line[strcspn(line, "\n")] = 0;  // Remove newline
-        if (*file_count >= MAX_FILES) {
-            fprintf(stderr, "Error: Maximum number of files (%d) exceeded.\n", MAX_FILES);
-            exit(1);
-        }
-        files[(*file_count)++] = strdup(line);
-        if (!files[(*file_count) - 1]) {
-            perror("Failed to allocate memory");
-            exit(1);
-        }
-    }
-
-    fclose(config);
-}
-
 // Function to expand glob patterns
 void expand_glob_patterns(const char *pattern, char **files, int *file_count) {
     glob_t glob_result;
@@ -147,23 +123,6 @@ void expand_glob_patterns(const char *pattern, char **files, int *file_count) {
         }
     }
     globfree(&glob_result);
-}
-
-// Function to expand ~ to the home directory
-const char *expand_home_directory(const char *path) {
-    if (path[0] == '~') {
-        const char *home = getenv("HOME");
-        if (!home) {
-            struct passwd *pw = getpwuid(uid_t);
-            if (pw) home = pw->pw_dir;
-        }
-        if (home) {
-            static char expanded_path[MAX_LINE_LENGTH];
-            snprintf(expanded_path, sizeof(expanded_path), "%s%s", home, path + 1);
-            return expanded_path;
-        }
-    }
-    return path;
 }
 
 int main(int argc, char *argv[]) {
@@ -200,10 +159,6 @@ int main(int argc, char *argv[]) {
     while (i < argc && pattern_count < MAX_PATTERNS) {
         patterns[pattern_count++] = argv[i++];
     }
-
-    // Load allowed log files from configuration
-    const char *config_path = expand_home_directory("~/.tagfind");
-    load_allowed_files(config_path, files, &file_count);
 
     // Parse file arguments and expand glob patterns
     while (i < argc && file_count < MAX_FILES) {
