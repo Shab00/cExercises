@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <pwd.h>  // For getpwuid
+#include <unistd.h>  // For getuid()
 
 #define MAX_PATTERNS 10
 #define MAX_FILES 100
@@ -205,4 +206,37 @@ int main(int argc, char *argv[]) {
     const char *config_path = expand_home_directory("~/.tagfind");
     load_allowed_files(config_path, files, &file_count);
 
-    // Parse file arguments and expand
+    // Parse file arguments and expand glob patterns
+    while (i < argc && file_count < MAX_FILES) {
+        expand_glob_patterns(argv[i++], files, &file_count);
+    }
+
+    // Search files/directories
+    int any_found = 0;
+    for (int j = 0; j < file_count; j++) {
+        struct stat statbuf;
+        if (stat(files[j], &statbuf) == -1) {
+            perror("Failed to get file status");
+            continue;
+        }
+
+        if (S_ISDIR(statbuf.st_mode) && recursive) {
+            search_directory(files[j], patterns, pattern_count, case_insensitive, show_line_numbers, or_logic);
+        } else if (S_ISREG(statbuf.st_mode)) {
+            if (search_files(files[j], patterns, pattern_count, case_insensitive, show_line_numbers, or_logic)) {
+                any_found = 1;
+            }
+        }
+    }
+
+    if (!any_found) {
+        printf("No matches found for specified patterns.\n");
+    }
+
+    // Free allocated memory
+    for (int j = 0; j < file_count; j++) {
+        free(files[j]);
+    }
+
+    return 0;
+}

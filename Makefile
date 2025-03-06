@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS= -Wall -g -DNDEBUG
 
-all: ex1 ex3 ex7 ex8 ex9 ex10 vowel ex11 ex12 ex13 ex14 ex15 ex16 extraCred ex17 ex18 ex19 ex22 ex22_main ex23 ex24 ex25 ex26
+all: ex1 ex3 ex7 ex8 ex9 ex10 vowel ex11 ex12 ex13 ex14 ex15 ex16 extraCred ex17 ex18 ex19 ex22 ex22_main ex23 ex24 ex25 tagfind
 
 ex1: ex1.c
 	$(CC) $(CFLAGS) -o ex1 ex1.c
@@ -66,12 +66,12 @@ ex24: ex24.c
 ex25: ex25.c
 	$(CC) $(CFLAGS) -o ex25 ex25.c
 
-ex26: ex26.c
-	$(CC) $(CFLAGS) -o ex26 ex26.c
+tagfind: tagfind.c
+	$(CC) $(CFLAGS) -o tagfind tagfind.c
 
 clean:
-	rm -f ex1 ex3 ex7 ex8 ex9 ex10 vowel ex11 ex12 ex13 ex14 ex15 ex16 extraCred ex17 ex18 ex19 ex22 ex22_main ex23 ex24 ex25 ex26
-	rm -rf ex1.dSYM ex3.dSYM ex7.dSYM ex8.dSYM ex9.dSYM ex10.dSYM vowel.dSYM ex11.dSYM ex12.dSYM ex13.dSYM ex14.dSYM ex15.dSYM ex16.dSYM extraCred.dSYM ex17.dSYM ex18.dSYM ex19.dSYM ex22.dSYM ex22_main.dSYM ex23.dSYM ex24.dSYM ex25.dSYM ex26.dSYM
+	rm -f ex1 ex3 ex7 ex8 ex9 ex10 vowel ex11 ex12 ex13 ex14 ex15 ex16 extraCred ex17 ex18 ex19 ex22 ex22_main ex23 ex24 ex25 tagfind
+	rm -rf ex1.dSYM ex3.dSYM ex7.dSYM ex8.dSYM ex9.dSYM ex10.dSYM vowel.dSYM ex11.dSYM ex12.dSYM ex13.dSYM ex14.dSYM ex15.dSYM ex16.dSYM extraCred.dSYM ex17.dSYM ex18.dSYM ex19.dSYM ex22.dSYM ex22_main.dSYM ex23.dSYM ex24.dSYM ex25.dSYM tagfind.dSYM
 
 rebuild:
 	clean all
