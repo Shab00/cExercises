@@ -3,6 +3,7 @@
 
 #define MAX_LINE_LENGTH 256
 
+// Function to search for a pattern in a file
 void search_file(const char *filename, const char *pattern) {
     FILE *file = fopen(filename, "r");
     if (!file) {
