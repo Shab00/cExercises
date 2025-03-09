@@ -1,22 +1,24 @@
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>  // For tolower()
+#include <ctype.h>
+#include <dirent.h>  // For directory handling
+#include <sys/stat.h>  // For file status (e.g., checking if it's a directory)
 
 #define MAX_LINE_LENGTH 256
 
 // Function to perform case-insensitive substring search
 int strstr_case_insensitive(const char *haystack, const char *needle) {
-    while (*haystack) {  // Loop through the haystack (the line)
+    while (*haystack) {
         const char *h = haystack;
         const char *n = needle;
-        while (*h && *n && tolower(*h) == tolower(*n)) {  // Compare characters case-insensitively
+        while (*h && *n && tolower(*h) == tolower(*n)) {
             h++;
             n++;
         }
-        if (!*n) return 1;  // If we reached the end of the needle, it's a match
+        if (!*n) return 1;  // Match found
         haystack++;
     }
-    return 0;  // No match found
+    return 0;  // No match
 }
 
 // Function to search for a pattern in a file
@@ -53,14 +55,48 @@ void search_file(const char *filename, const char *pattern, int case_insensitive
     fclose(file);  // Close the file when done
 }
 
+// Function to recursively search directories
+void search_directory(const char *dirpath, const char *pattern, int case_insensitive, int show_line_numbers) {
+    DIR *dir = opendir(dirpath);  // Open the directory
+    if (!dir) {
+        perror("Failed to open directory");  // Print an error if the directory can't be opened
+        return;
+    }
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {  // Read each entry in the directory
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;  // Skip the current directory (.) and parent directory (..)
+        }
+
+        char path[MAX_LINE_LENGTH];
+        snprintf(path, sizeof(path), "%s/%s", dirpath, entry->d_name);  // Create the full path to the entry
+
+        struct stat statbuf;
+        if (stat(path, &statbuf) == -1) {  // Get information about the entry
+            perror("Failed to get file status");
+            continue;
+        }
+
+        if (S_ISDIR(statbuf.st_mode)) {  // If the entry is a directory
+            search_directory(path, pattern, case_insensitive, show_line_numbers);  // Recursively search it
+        } else if (S_ISREG(statbuf.st_mode)) {  // If the entry is a regular file
+            search_file(path, pattern, case_insensitive, show_line_numbers);  // Search the file
+        }
+    }
+
+    closedir(dir);  // Close the directory when done
+}
+
 int main(int argc, char *argv[]) {
     if (argc < 3) {  // Check if the user provided enough arguments
-        fprintf(stderr, "Usage: %s [-i] [-n] <pattern> <filename>\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-i] [-n] [-r] <pattern> <file1/dir1> [file2/dir2 ...]\n", argv[0]);
         return 1;
     }
 
     int case_insensitive = 0;  // Default: case-sensitive search
     int show_line_numbers = 0;  // Default: don't show line numbers
+    int recursive = 0;  // Default: don't search directories recursively
     int i = 1;
 
     // Parse command-line options
@@ -69,14 +105,28 @@ int main(int argc, char *argv[]) {
             case_insensitive = 1;  // Enable case-insensitive search
         } else if (strcmp(argv[i], "-n") == 0) {
             show_line_numbers = 1;  // Enable line numbers
+        } else if (strcmp(argv[i], "-r") == 0) {
+            recursive = 1;  // Enable recursive directory search
         }
         i++;
     }
 
     const char *pattern = argv[i++];  // The pattern to search for
-    const char *filename = argv[i];  // The file to search in
 
-    search_file(filename, pattern, case_insensitive, show_line_numbers);  // Call the search function
+    // Search files/directories
+    for (; i < argc; i++) {
+        struct stat statbuf;
+        if (stat(argv[i], &statbuf) == -1) {  // Get information about the file/directory
+            perror("Failed to get file status");
+            continue;
+        }
+
+        if (S_ISDIR(statbuf.st_mode) && recursive) {  // If it's a directory and recursive search is enabled
+            search_directory(argv[i], pattern, case_insensitive, show_line_numbers);  // Search the directory
+        } else if (S_ISREG(statbuf.st_mode)) {  // If it's a regular file
+            search_file(argv[i], pattern, case_insensitive, show_line_numbers);  // Search the file
+        }
+    }
 
     return 0;
 }
