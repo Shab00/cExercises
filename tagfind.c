@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <dirent.h>
+#include <sys/stat.h>
 
 #define MAX_LINE_LENGTH 256
 
@@ -49,14 +51,48 @@ void search_file(const char *filename, const char *pattern, int case_insensitive
     fclose(file);
 }
 
+void search_directory(const char *dirpath, const char *pattern, int case_insensitive, int show_line_numbers) {
+    DIR *dir = opendir(dirpath);
+    if (!dir) {
+        perror("Failed to open directory");
+        return;
+    }
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        char path[MAX_LINE_LENGTH];
+        snprintf(path, sizeof(path), "%s/%s", dirpath, entry->d_name);
+
+        struct stat statbuf;
+        if (stat(path, &statbuf) == -1) {
+            perror("Failed to get file status");
+            continue;
+        }
+
+        if (S_ISDIR(statbuf.st_mode)) {
+
+            search_directory(path, pattern, case_insensitive, show_line_numbers);
+        } else if (S_ISREG(statbuf.st_mode)) {
+            search_file(path, pattern, case_insensitive, show_line_numbers);
+        }
+    }
+
+    closedir(dir);
+}
+
 int main(int argc, char *argv[]) {
     if (argc < 3) {
-        fprintf(stderr, "Usage: %s <pattern> <filename>\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-i] [-n] [-r] <pattern> <file1/dir1> [file2/dir2 ...]\n", argv[0]);
         return 1;
     }
 
     int case_insensitive = 0;
     int show_line_numbers = 0;
+    int recursive = 0;
     int i = 1;
 
     while (i < argc && argv[i][0] == '-') {
@@ -64,14 +100,27 @@ int main(int argc, char *argv[]) {
             case_insensitive = 1;
         } else if (strcmp(argv[i], "-n") == 0) {
             show_line_numbers = 1;
+        } else if (strcmp(argv[i], "-r") == 0){
+            recursive = 1;
         }
         i++;
     }
 
     const char *pattern = argv[i++];
-    const char *filename = argv[i];
 
-    search_file(filename, pattern, case_insensitive, show_line_numbers);
+    for (; i < argc; i++) {
+        struct stat statbuf;
+        if (stat(argv[i], &statbuf) == -1) {
+            perror("Failed to get file status");
+            continue;
+        }
+
+        if (S_ISDIR(statbuf.st_mode) && recursive) {
+            search_directory(argv[i], pattern, case_insensitive, show_line_numbers);
+        } else if (S_ISREG(statbuf.st_mode)) {
+            search_file(argv[i], pattern, case_insensitive, show_line_numbers);
+        }
+    }
 
     return 0;
 }
