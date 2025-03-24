@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS= -Wall -g -DNDEBUG
 
-all: ex1 ex2 ex3 ex4 pyr ex5
+all: ex1 ex2 ex3 ex4 pyr ex5 ex6
 
 ex1: ex1.c
 	$(CC) $(CFLAGS) -o ex1 ex1.c
@@ -21,9 +21,12 @@ pyr: pyr.c
 ex5: ex5.c
 	$(CC) $(CFLAGS) -o ex5 ex5.c
 
+ex6: ex6.c
+	$(CC) $(CFLAGS) -o ex6 ex6.c
+
 clean:
-	rm -f ex1 ex2 ex3 ex4 pyr ex5
-	rm -rf ex1.dSYM ex2.dSYM ex3.dSYM ex4.dSYM pyr.dSYM ex5.dSYM
+	rm -f ex1 ex2 ex3 ex4 pyr ex5 ex6
+	rm -rf ex1.dSYM ex2.dSYM ex3.dSYM ex4.dSYM pyr.dSYM ex5.dSYM ex6.dSYM
 
 rebuild:
 	clean all
