@@ -2,43 +2,31 @@
 #include <stdlib.h>
 
 int main() {
-    int nrows = 3;
-    int i, j;
+    int nrows, i, j;
 
-    /* Define the 2D pointer variable here */
-    int **pnumbers;
+    printf("Enter the number of rows for the triangle: ");
+    scanf("%d", &nrows);
 
-    /* Allocate memory for holding three rows */
-    pnumbers = (int **) malloc(nrows * sizeof(int *));
+    int **array = (int **) malloc(nrows * sizeof(int *));
 
-    /* Allocate memory for storing the individual elements in each row */
     for (i = 0; i < nrows; i++) {
-        pnumbers[i] = (int *) malloc((i + 1) * sizeof(int)); // Allocate enough space for i + 1 elements
+        array[i] = (int *) malloc((i + 1) * sizeof(int));
+        for (j = 0; j <= i; j++) {
+            array[i][j] = j + 1; 
+        }
     }
 
-    /* Assign values to the array */
-    pnumbers[0][0] = 1;
-    pnumbers[1][0] = 1;
-    pnumbers[1][1] = 1;
-    pnumbers[2][0] = 1;
-    pnumbers[2][1] = 2;
-    pnumbers[2][2] = 1;
-
-    /* Print the triangular array */
     for (i = 0; i < nrows; i++) {
         for (j = 0; j <= i; j++) {
-            printf("%d ", pnumbers[i][j]);
+            printf("%d ", array[i][j]);
         }
-        printf("\n");
+        printf("\n"); 
     }
 
-    /* Free memory allocated for each row */
     for (i = 0; i < nrows; i++) {
-        free(pnumbers[i]);
+        free(array[i]); 
     }
-
-    /* Free the top-level pointer */
-    free(pnumbers);
+    free(array);
 
     return 0;
 }
