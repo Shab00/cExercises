@@ -2,34 +2,52 @@
 #include <stdlib.h>
 
 int main() {
+    int nrows = 6;
     int i, j;
-    /* TODO: define the 2D pointer variable here */
 
-    /* TODO: complete the following line to allocate memory for holding three rows */
-    pnumbers = (int **) malloc();
+    char **pdashes;
+    
+    pdashes = (char **) malloc(nrows * sizeof(char *));
 
-    /* TODO: allocate memory for storing the individual elements in a row */
-    pnumbers[0] = (int *) malloc(1 * sizeof(int));
+    for (i = 0; i < nrows; i++) {
+        pdashes[i] = (char *) malloc((i + 1) * sizeof(char));
+    } 
+    pdashes[0][0] = '-';
 
-    pnumbers[0][0] = 1;
-    pnumbers[1][0] = 1;
-    pnumbers[1][1] = 1;
-    pnumbers[2][0] = 1;
-    pnumbers[2][1] = 2;
-    pnumbers[2][2] = 1;
+    pdashes[1][0] = '-';
+    pdashes[1][1] = '-';
 
-    for (i = 0; i < 3; i++) {
+    pdashes[2][0] = '-';
+    pdashes[2][1] = '-';
+    pdashes[2][2] = '-';
+
+    pdashes[3][0] = '-';
+    pdashes[3][1] = '-';
+    pdashes[3][2] = '-';
+    pdashes[3][3] = '-';
+
+    pdashes[4][0] = '-';
+    pdashes[4][1] = '-';
+    pdashes[4][2] = '-';
+    pdashes[4][3] = '-';
+    pdashes[4][4] = '-';
+
+    pdashes[5][0] = '-';
+    pdashes[5][1] = '-';
+    pdashes[5][2] = '-';
+    pdashes[5][3] = '-';
+    pdashes[5][4] = '-';
+    pdashes[5][5] = '-';
+
+    for (i = 0; i < nrows; i++) {
         for (j = 0; j <= i; j++) {
-            printf("%d", pnumbers[i][j]);
+            printf("%c ", pdashes[i][j]);
         }
         printf("\n");
     }
 
-    for (i = 0; i < 3; i++) {
-        /* TODO: free memory allocated for each row */
+    for (i = 0; i < nrows; i++) {
+        free(pdashes[i]);
     }
-
-    /* TODO: free the top-level pointer */
-
-  return 0;
+    free(pdashes);
 }
