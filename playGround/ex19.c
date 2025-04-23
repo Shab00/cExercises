@@ -33,6 +33,34 @@ int pop(node_t ** head) {
 
 int remove_by_value(node_t ** head, int val) {
     /* TODO: fill in your code here */
+
+    if (*head == NULL) {
+        return -1;
+    }
+
+    node_t *current = *head;
+    node_t *temp_node = NULL;
+
+    if (current->val == val) {
+        return pop(head); // Use the existing pop function
+    }
+
+    // Traverse the list to find the node with the value
+    while (current->next != NULL && current->next->val != val) {
+        current = current->next;
+    }
+
+    if (current->next == NULL) {
+        // Value not found in the list
+        return -1;
+    }
+
+    // Remove the node
+    temp_node = current->next;        // Node to remove
+    current->next = temp_node->next;  // Bypass the node
+    free(temp_node);                  // Free memory
+
+    return 0; // Removal successful
 }
 
 int main() {
