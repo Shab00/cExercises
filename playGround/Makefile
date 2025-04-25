@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS= -Wall -g -DNDEBUG
 
-all: ex1 ex2 ex3 ex4 pyr ex5 ex6 ex7 ex8 ex9 ex10 ex11 ex12 ex13 ex14 ex15 ex16 ex17 ex18 ex19
+all: ex1 ex2 ex3 ex4 pyr ex5 ex6 ex7 ex8 ex9 ex10 ex11 ex12 ex13 ex14 ex15 ex16 ex17 ex18 ex19 ex20
 
 ex1: ex1.c
 	$(CC) $(CFLAGS) -o ex1 ex1.c
@@ -63,9 +63,12 @@ ex18: ex18.c
 ex19: ex19.c
 	$(CC) $(CFLAGS) -o ex19 ex19.c
 
+ex20: ex20.c
+	$(CC) $(CFLAGS) -o ex20 ex20.c
+
 clean:
-	rm -f ex1 ex2 ex3 ex4 pyr ex5 ex6 ex7 ex8 ex9 ex10 ex11 ex12 ex13 ex14 ex15 ex16 ex17 ex18 ex19
-	rm -rf ex1.dSYM ex2.dSYM ex3.dSYM ex4.dSYM pyr.dSYM ex5.dSYM ex6.dSYM ex7.dSYM ex8.dSYM ex9.dSYM ex10.dSYM ex11.dSYM ex12.dSYM ex13.dSYM ex14.dSYM ex15.dSYM ex16.dSYM ex17.dSYM ex18.dSYM ex19.dSYM
+	rm -f ex1 ex2 ex3 ex4 pyr ex5 ex6 ex7 ex8 ex9 ex10 ex11 ex12 ex13 ex14 ex15 ex16 ex17 ex18 ex19 ex20
+	rm -rf ex1.dSYM ex2.dSYM ex3.dSYM ex4.dSYM pyr.dSYM ex5.dSYM ex6.dSYM ex7.dSYM ex8.dSYM ex9.dSYM ex10.dSYM ex11.dSYM ex12.dSYM ex13.dSYM ex14.dSYM ex15.dSYM ex16.dSYM ex17.dSYM ex18.dSYM ex19.dSYM ex20.dSYM
 
 rebuild:
 	clean all
