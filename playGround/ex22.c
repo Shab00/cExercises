@@ -7,7 +7,6 @@ int main() {
 
     // Array of 3 pointers
     int *parray[3];
-
     // Copy last three addresses of intarray into parray
     // Use parray and pointer
     int i;
