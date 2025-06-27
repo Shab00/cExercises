@@ -1,0 +1,8 @@
+data=[
+{latitude: 37.826698, longitude: -122.423302, info: 'Speed: 14.5'},
+{latitude: 37.827000, longitude: -122.424004, info: 'Speed: 15.2'},
+{latitude: 37.827301, longitude: -122.424698, info: 'Speed: 14.9'},
+{latitude: 37.827599, longitude: -122.425400, info: 'Speed: 15.7'},
+{latitude: 37.827999, longitude: -122.426003, info: 'Speed: 16.1'},
+{latitude: 37.828300, longitude: -122.426598, info: 'Speed: 15.5'},
+Invalid latitude: 378.286011
