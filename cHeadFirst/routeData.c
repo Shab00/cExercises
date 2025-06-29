@@ -14,11 +14,11 @@ int main()
         else
             started = 1;
         if ((latitude < -90) || (latitude > 90)) {
-            printf("Invalid latitude: %f\n", latitude);
+            fprintf(stderr, "Invaild latitude: %f\n", latitude);
             return 2;
         }
         if ((longitude < -180) || (longitude > 180)) {
-            printf("Invalid longitude: %f\n", longitude);
+            fprintf(stderr, "Invaild longitude: %f\n", longitude);
             return 2;
         }
         printf("{latitude: %f, longitude: %f, info: '%s'}", latitude, longitude, info);
