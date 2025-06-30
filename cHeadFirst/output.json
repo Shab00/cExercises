@@ -1,7 +1,9 @@
 data=[
-{latitude: 37.826698, longitude: -122.423302, info: 'Speed: 14.5'},
-{latitude: 37.827000, longitude: -122.424004, info: 'Speed: 15.2'},
-{latitude: 37.827301, longitude: -122.424698, info: 'Speed: 14.9'},
-{latitude: 37.827599, longitude: -122.425400, info: 'Speed: 15.7'},
-{latitude: 37.827999, longitude: -122.426003, info: 'Speed: 16.1'},
-{latitude: 37.828300, longitude: -122.426598, info: 'Speed: 15.5'},
+{latitude: 30.685163, longitude: -68.137207, info: 'Type=Yeti'},
+{latitude: 28.304380, longitude: -74.575195, info: 'Type=UFO'},
+{latitude: 29.132971, longitude: -71.136475, info: 'Type=Ship'},
+{latitude: 27.868217, longitude: -68.005371, info: 'Type=Goatsucker'},
+{latitude: 30.496017, longitude: -73.333740, info: 'Type=Disappearance'},
+{latitude: 26.224447, longitude: -71.477051, info: 'Type=UFO'},
+{latitude: 29.401320, longitude: -66.027832, info: 'Type=Ship'}
+
