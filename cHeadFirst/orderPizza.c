@@ -8,13 +8,13 @@ int main(int argc, char * argv[])
     int count = 0;
     char ch;
 
-    while((ch = getopt(argc, argv, "dt:")) ! = EOF)
+    while((ch = getopt(argc, argv, "d:t")) != EOF)
         switch (ch) {
             case 'd':
                 delivery = optarg;
                 break;
             case 't':
-                thick = ;
+                thick = 1;
                 break;
             default:
                 fprintf(stderr, "Unknown option: '%s'\n", optarg);
