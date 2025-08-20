@@ -15,7 +15,6 @@ void find(int num_ads, char *ads[])
     puts("------------------------------");
 }
 
-
 int main()
 {
     int NUM_ADS = 7;
