@@ -34,7 +34,7 @@ int main() {
     };
     int n = sizeof(alerts) / sizeof(alerts[0]);
     for (int i = 0; i < n; i++) {
-        // <-- Replace this comment with a single line that sends the correct notification!
+        (notifications[alerts[i].type])(alerts[i]);
     }
     return 0;
 }
