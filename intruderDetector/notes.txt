@@ -1,0 +1,81 @@
+# Intruder Detector Project Roadmap (OpenCV + C)
+
+## Step 1: Initialize the Webcam
+
+**Goal:**  
+Open the webcam for capturing images.
+
+**How-to:**  
+- Include OpenCV headers.
+- Use `cvCreateCameraCapture(0)` to try and open the default camera.
+- Check for errors (e.g., if no webcam is found).
+
+**Questions:**  
+- Do you know how to print error messages in C?
+- Do you know how to quit your program if something fails?
+
+---
+
+## Step 2: Grab a Frame from the Webcam
+
+**Goal:**  
+Capture a single image frame from the webcam.
+
+**How-to:**  
+- Use `cvQueryFrame()` with your capture pointer to get the latest frame.
+- Think about how to check if you actually got a frame.
+
+---
+
+## Step 3: Display the Frame (Optional, but useful for debugging)
+
+**Goal:**  
+Show the webcam image in a window so you can see what the camera sees.
+
+**How-to:**  
+- Use `cvNamedWindow()` to create a window.
+- Use `cvShowImage()` to display the frame.
+- Use `cvWaitKey()` to keep the window open for a short time (e.g., 30 ms).
+
+---
+
+## Step 4: Save the Frame as an Image File
+
+**Goal:**  
+Write the captured image to a file (e.g., `snapshot.jpg`).
+
+**How-to:**  
+- Use `cvSaveImage()` to save the current frame.
+
+---
+
+## Step 5: Loop to Continuously Capture Frames
+
+**Goal:**  
+Continuously capture new frames, display, and potentially save them.
+
+**How-to:**  
+- Wrap your frame capture and display code in a `while(1)` loop.
+- Use `cvWaitKey()` inside the loop to provide an exit condition (e.g., press 'q' to quit).
+
+---
+
+## Step 6: Motion Detection (Bonus/Challenge)
+
+**Goal:**  
+Only save frames when there is movement (an "intruder").
+
+**How-to:**  
+- Store the previous frame.
+- Compare the current frame to the previous frame to detect changes.
+- If the change is significant, save the current frame as an image.
+
+---
+
+## Step 7: Clean Up
+
+**Goal:**  
+Release webcam and destroy windows before exiting, so your program is tidy.
+
+**How-to:**  
+- Use `cvReleaseCapture()` and `cvDestroyAllWindows()`.
