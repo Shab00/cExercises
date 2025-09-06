@@ -1,4 +1,4 @@
-# Intruder Detector Project Roadmap (OpenCV + C)
+# Intruder Detector Project Roadmap (SDL2 + C)
 
 ## Step 1: Initialize the Webcam
 
@@ -6,12 +6,12 @@
 Open the webcam for capturing images.
 
 **How-to:**  
-- Include OpenCV headers.
-- Use `cvCreateCameraCapture(0)` to try and open the default camera.
+- Use SDL2 and SDL2's [camera API](https://wiki.libsdl.org/SDL_CreateCamera) (note: camera support is experimental; you may need [SDL2-camera](https://github.com/icculus/SDL2-camera) or platform-specific APIs).
+- Create an SDL_Window for display.
 - Check for errors (e.g., if no webcam is found).
 
 **Questions:**  
-- Do you know how to print error messages in C?
+- Do you know how to print error messages in C?  
 - Do you know how to quit your program if something fails?
 
 ---
@@ -22,8 +22,8 @@ Open the webcam for capturing images.
 Capture a single image frame from the webcam.
 
 **How-to:**  
-- Use `cvQueryFrame()` with your capture pointer to get the latest frame.
-- Think about how to check if you actually got a frame.
+- Use camera API (`SDL_CameraGetFrame()` or similar) to get the latest frame.
+- Check if the frame was retrieved successfully.
 
 ---
 
@@ -33,19 +33,19 @@ Capture a single image frame from the webcam.
 Show the webcam image in a window so you can see what the camera sees.
 
 **How-to:**  
-- Use `cvNamedWindow()` to create a window.
-- Use `cvShowImage()` to display the frame.
-- Use `cvWaitKey()` to keep the window open for a short time (e.g., 30 ms).
+- Create an SDL_Texture from the pixel data.
+- Use `SDL_RenderCopy()` and `SDL_RenderPresent()` to display the frame.
 
 ---
 
 ## Step 4: Save the Frame as an Image File
 
 **Goal:**  
-Write the captured image to a file (e.g., `snapshot.jpg`).
+Write the captured image to a file (e.g., `snapshot.bmp`).
 
 **How-to:**  
-- Use `cvSaveImage()` to save the current frame.
+- Use SDL's image saving routines such as `SDL_SaveBMP()` (for BMP format only).
+- For PNG/JPG, use [stb_image_write.h](https://github.com/nothings/stb) or [SDL2_image](https://www.libsdl.org/projects/SDL_image/).
 
 ---
 
@@ -55,8 +55,8 @@ Write the captured image to a file (e.g., `snapshot.jpg`).
 Continuously capture new frames, display, and potentially save them.
 
 **How-to:**  
-- Wrap your frame capture and display code in a `while(1)` loop.
-- Use `cvWaitKey()` inside the loop to provide an exit condition (e.g., press 'q' to quit).
+- Use a `while` loop to poll frames from the webcam.
+- Poll SDL events in the loop to allow user interaction (e.g., quit with 'q' or window close).
 
 ---
 
@@ -66,8 +66,8 @@ Continuously capture new frames, display, and potentially save them.
 Only save frames when there is movement (an "intruder").
 
 **How-to:**  
-- Store the previous frame.
-- Compare the current frame to the previous frame to detect changes.
+- Store the previous frame's pixel data in memory.
+- Compare the current frame to the previous frame to detect changes (e.g., pixel difference threshold).
 - If the change is significant, save the current frame as an image.
 
 ---
@@ -78,4 +78,11 @@ Only save frames when there is movement (an "intruder").
 Release webcam and destroy windows before exiting, so your program is tidy.
 
 **How-to:**  
-- Use `cvReleaseCapture()` and `cvDestroyAllWindows()`.
+- Free camera resources (close camera).
+- Destroy textures, renderer, and window.
+- Call `SDL_Quit()` before exiting.
+
+---
+
+**Tip:**  
+SDL2 is great for graphics and image handling. Webcam support may require extra setup or libraries (SDL2-camera, Video4Linux2 on Linux, AVFoundation on macOS). If you need a starter code for capturing and displaying webcam frames, just ask!

@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Iinclude -Wall -Wextra -std=c11 $(shell pkg-config --cflags opencv4)
-LDFLAGS = $(shell pkg-config --libs opencv4)
+CFLAGS = -Iinclude -Wall -Wextra -std=c11 $(shell pkg-config --cflags sdl2)
+LDFLAGS = $(shell pkg-config --libs sdl2)
 SRC_DIR = src
 BIN_DIR = bin
 EXEC = $(BIN_DIR)/intruderDetector
