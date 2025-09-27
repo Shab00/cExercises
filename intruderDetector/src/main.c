@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     size_t frame_size = WIDTH * HEIGHT * CHANNELS;
     unsigned char *previous = calloc(frame_size, 1);
 
-    for (int i = 0; i < 100; ++i) { // Grab 100 frames
+    for (int i = 0; i < 100; ++i) {
         GstSample *sample = NULL;
         g_signal_emit_by_name(appsink, "pull-sample", &sample, NULL);
 
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
             if (gst_buffer_map(buffer, &map, GST_MAP_READ)) {
                 int changed_pixels = 0;
                 for (size_t j = 0; j < frame_size; ++j) {
-                    if (abs((int)map.data[j] - (int)previous[j]) > 30) { // Threshold
+                    if (abs((int)map.data[j] - (int)previous[j]) > 30) { 
                         ++changed_pixels;
                     }
                 }
