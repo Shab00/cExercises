@@ -1,4 +1,3 @@
-// Motion detector
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 #include <stdio.h>
@@ -11,15 +10,19 @@
 
 int main(int argc, char *argv[]) {
     gst_init(&argc, &argv);
-    GstElement *pipeline = gst_parse_launch(
-        "avfvideosrc ! videoconvert ! video/x-raw,format=RGB,width=640,height=480 ! appsink name=sink", NULL);
+    const char *pipeline_desc =
+        "avfvideosrc ! videoconvert ! video/x-raw,format=RGB,width=640,height=480 ! tee name=t "
+        "t. ! queue ! appsink name=sink "
+        "t. ! queue ! videoconvert ! tcpserversink host=127.0.0.1 port=5000";
+
+    GstElement *pipeline = gst_parse_launch(pipeline_desc, NULL);
     GstElement *appsink = gst_bin_get_by_name(GST_BIN(pipeline), "sink");
     gst_element_set_state(pipeline, GST_STATE_PLAYING);
 
     size_t frame_size = WIDTH * HEIGHT * CHANNELS;
     unsigned char *previous = calloc(frame_size, 1);
 
-    for (int i = 0; i < 100; ++i) {
+    while (1) { 
         GstSample *sample = NULL;
         g_signal_emit_by_name(appsink, "pull-sample", &sample, NULL);
 
@@ -33,7 +36,7 @@ int main(int argc, char *argv[]) {
                         ++changed_pixels;
                     }
                 }
-                printf("Frame %d: Changed pixels: %d\n", i+1, changed_pixels);
+                printf("Changed pixels: %d\n", changed_pixels);
                 if (changed_pixels > (frame_size / 100)) {
                     printf("Motion detected!\n");
                 }
