@@ -9,10 +9,11 @@ int main(int argc, char *argv[])
     char *feeds[] = {
         "https://cointelegraph.com/rss/tag/bitcoin",
         "https://cointelegraph.com/rss/category/top-10-cryptocurrencies",
-        "https://cointelegraph.com/rss/category/market-analysis"
+        "https://cointelegraph.com/rss/category/market-analysis",
+        "https://cointelegraph.com/rss/tag/altcoin"
     };
 
-    int times = 3;
+    int times = sizeof(feeds) / sizeof(feeds[0]);
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <phrase>\n", argv[0]);
         return 1;
