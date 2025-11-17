@@ -1,14 +1,225 @@
-# My C Project Skeleton
+# Intruder Detector Project Documentation
 
-## Directory Layout
+## Overview
 
-- `include/` — Header files
-- `src/` — Source files
-- `lib/` — Static libraries (.a)
-- `bin/` — Executables
+This project detects intruders using your webcam.  
+It is built in C and uses [GStreamer](https://gstreamer.freedesktop.org/) for video capture on macOS.  
+You can extend it to do real-time motion detection, image saving, and alerting.
 
-## Build and Run
+---
+
+## Requirements
+
+### **Software**
+
+- **macOS** (tested on Ventura/Sonoma)
+- **GStreamer** (video capture and frame pipeline)
+- **pkg-config** (for compiling)
+- **GCC** (C compiler, via Xcode Command Line Tools or Homebrew)
+
+### **Libraries**
+
+- GStreamer core
+- GStreamer plugins: `base`, `good`, `bad`, `ugly` (for full video support)
+- Optionally, OpenCV or your own algorithms for image processing/motion detection
+
+---
+
+## Installation
+
+### **1. Install GStreamer and plugins**
+
+```sh
+brew install gstreamer gst-plugins-base gst-plugins-good gst-plugins-bad gst-plugins-ugly
+```
+
+### **2. Install pkg-config**
+
+```sh
+brew install pkg-config
+```
+
+### **3. (Optional) Install OpenCV for advanced detection**
+
+```sh
+brew install opencv
+```
+
+---
+
+## Project Structure
+
+```
+intruder-detector/
+├── src/
+│   ├── main.c          # main logic (capture, detect)
+│   ├── detector.c      # motion detection logic (optional)
+│   ├── detector.h      # motion detection header (optional)
+├── include/            # headers (optional)
+├── bin/
+│   └── intruderDetector  # built binary
+├── Makefile
+└── README.md           # this documentation
+```
+
+---
+
+## How It Works
+
+1. **Video Capture:**  
+   Uses GStreamer (`avfvideosrc`) to get frames from your webcam.
+
+2. **Motion Detection:**  
+   - **Simple:** Compares consecutive frames for pixel changes.
+   - **Advanced:** Use OpenCV for background subtraction, contour detection, etc.
+
+3. **Triggering:**  
+   When motion is detected, you can:
+   - Save a photo/video
+   - Send an alert (email, notification, etc.)
+   - Log the event
+
+---
+
+## Example: Basic Motion Detection Loop
+
+### **main.c**
+
+```c name=src/main.c
+#include <gst/gst.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+// Optionally include OpenCV or your own detector header
+
+int main(int argc, char *argv[]) {
+    gst_init(&argc, &argv);
+
+    // Use appsink to access frames
+    GstElement *pipeline = gst_parse_launch(
+        "avfvideosrc ! videoconvert ! video/x-raw,format=RGB ! appsink name=sink", NULL);
+    GstElement *sink = gst_bin_get_by_name(GST_BIN(pipeline), "sink");
+
+    gst_element_set_state(pipeline, GST_STATE_PLAYING);
+
+    // Main loop: poll for frames and detect motion
+    while (1) {
+        GstSample *sample = NULL;
+        g_signal_emit_by_name(sink, "pull-sample", &sample, NULL);
+        if (sample) {
+            // Access raw frame data here
+            // TODO: Add motion detection logic
+
+            gst_sample_unref(sample);
+        }
+        // Sleep or break as needed
+    }
+
+    gst_element_set_state(pipeline, GST_STATE_NULL);
+    gst_object_unref(pipeline);
+    return 0;
+}
+```
+
+---
+
+## Example Makefile
+
+```makefile name=Makefile
+CC = gcc
+CFLAGS = -Iinclude -Wall -Wextra -std=c11 $(shell pkg-config --cflags gstreamer-1.0)
+LDFLAGS = $(shell pkg-config --libs gstreamer-1.0)
+SRC_DIR = src
+BIN_DIR = bin
+EXEC = $(BIN_DIR)/intruderDetector
+SRC = $(SRC_DIR)/main.c
+
+all: $(EXEC)
+
+$(EXEC): $(SRC)
+	@mkdir -p $(BIN_DIR)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+
+clean:
+	@rm -rf $(BIN_DIR)/*
+
+.PHONY: all clean
+```
+
+---
+
+## To Build and Run
 
 ```sh
 make
-./bin/myprogram
+./bin/intruderDetector
+```
+
+---
+
+## Key GStreamer Concepts
+
+- **avfvideosrc**: macOS webcam input
+- **videoconvert**: ensures proper video format
+- **appsink**: allows you to pull frames into your own C code for analysis
+
+---
+
+## Motion Detection Approaches
+
+### **Simple (C only, no OpenCV):**
+- Compare each pixel of current frame to previous frame.
+- If enough pixels change, trigger an "intruder detected" event.
+
+### **Advanced (with OpenCV):**
+- Use background subtraction (e.g., MOG2)
+- Detect contours/moving objects
+
+---
+
+## Saving Images/Video
+
+- Use GStreamer pipeline to save frames or video (e.g., add `jpegenc ! filesink location=...`)
+- Or save frames manually from C code.
+
+---
+
+## Alerting
+
+- Log to file
+- Send email/SMS (using external tools/APIs)
+- Make a sound or show a notification
+
+---
+
+## Troubleshooting
+
+- Check macOS webcam permissions
+- If GStreamer hangs, check pipeline syntax
+- For OpenCV, ensure you link/include correctly
+
+---
+
+## References
+
+- [GStreamer Appsink docs](https://gstreamer.freedesktop.org/documentation/appsink/index.html)
+- [OpenCV C API](https://docs.opencv.org/)
+- [GStreamer pipelines](https://gstreamer.freedesktop.org/documentation/application-development/introduction/pipelines.html)
+
+---
+
+## Example Extension Ideas
+
+- Save images when motion is detected
+- Record video clips of motion
+- Email or message alerts
+- Web dashboard
+- Night vision filter
+
+---
+
+## License
+
+MIT or your preferred license.
+
+---

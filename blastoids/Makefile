@@ -1,35 +1,64 @@
-# Compiler and Flags
-CC = gcc
-CFLAGS = -Iinclude -Wall -Wextra -std=c11
+# Makefile for Blasteroids skeleton
+# - builds all .c files in src/
+# - puts .o files into obj/
+# - links with Allegro via pkg-config
+#
+# Usage:
+#   make          # build executable 'blasteroids'
+#   make run      # build and run
+#   make clean    # remove build artifacts
+#   make check-pkg# verify pkg-config can find Allegro packages
 
-# Directories
-SRC_DIR = src
-INCLUDE_DIR = include
-LIB_DIR = lib
-BIN_DIR = bin
+CC ?= gcc
+PKG_PACKAGES := allegro-5 allegro_main-5 allegro_primitives-5 allegro_font-5 allegro_ttf-5 allegro_audio-5 allegro_acodec-5
 
-# Targets
-LIB_NAME = libmylib.a
-EXEC_NAME = myprogram
+PKG_CFLAGS := $(shell pkg-config --cflags $(PKG_PACKAGES) 2>/dev/null)
+PKG_LIBS   := $(shell pkg-config --libs   $(PKG_PACKAGES) 2>/dev/null)
 
-SRC_FILES = \$(wildcard \$(SRC_DIR)/*.c)
-OBJ_FILES = \$(SRC_FILES:.c=.o)
-LIB_FILE = \$(LIB_DIR)/\$(LIB_NAME)
+INCLUDE_DIR := include
+SRCDIR := src
+OBJDIR := obj
+TARGET := blasteroids
 
-all: \$(BIN_DIR)/\$(EXEC_NAME)
+SRCS := $(wildcard $(SRCDIR)/*.c)
+OBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
 
-\$(LIB_FILE): \$(SRC_DIR)/mylib.o
-	mkdir -p \$(LIB_DIR)
-	ar rcs \$@ \$^
+CFLAGS := -Wall -Wextra -O2 $(PKG_CFLAGS) -I$(INCLUDE_DIR)
+LDFLAGS := $(PKG_LIBS)
 
-\$(BIN_DIR)/\$(EXEC_NAME): \$(LIB_FILE) \$(SRC_DIR)/main.o
-	mkdir -p \$(BIN_DIR)
-	\$(CC) \$(CFLAGS) -o \$@ \$(SRC_DIR)/main.o -L\$(LIB_DIR) -lmylib
+.PHONY: all clean run check-pkg
 
-\$(SRC_DIR)/%.o: \$(SRC_DIR)/%.c
-	\$(CC) \$(CFLAGS) -c \$< -o \$@
+all: check-pkg $(TARGET)
+
+# Link
+$(TARGET): $(OBJS)
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+# Compile to obj/
+$(OBJDIR)/%.o: $(SRCDIR)/%.c | $(OBJDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# ensure obj dir exists
+$(OBJDIR):
+	@mkdir -p $(OBJDIR)
+
+# quick run target
+run: all
+	./$(TARGET)
 
 clean:
-	rm -f \$(SRC_DIR)/*.o \$(LIB_DIR)/*.a \$(BIN_DIR)/*
+	@rm -rf $(OBJDIR) $(TARGET)
 
-.PHONY: all clean
+# verify pkg-config found allegro packages
+check-pkg:
+	@if [ -z "$(PKG_CFLAGS)" ] || [ -z "$(PKG_LIBS)" ]; then \
+		echo "ERROR: pkg-config could not find required Allegro packages."; \
+		echo "Make sure allegro and pkg-config are installed and PKG_CONFIG_PATH is set."; \
+		echo "You can try: brew install pkg-config allegro freetype libsndfile libogg libvorbis"; \
+		false; \
+	else \
+		echo "pkg-config found Allegro packages:"; \
+		pkg-config --modversion allegro-5 || true; \
+		echo "CFLAGS: $(PKG_CFLAGS)"; \
+		echo "LIBS: $(PKG_LIBS)"; \
+	fi
