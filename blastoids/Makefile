@@ -10,8 +10,7 @@
 #   make check-pkg# verify pkg-config can find Allegro packages
 
 CC ?= gcc
-PKG_PACKAGES := allegro-5 allegro_main-5 allegro_primitives-5 allegro_font-5 allegro_ttf-5 allegro_audio-5 allegro_acodec-5
-
+PKG_PACKAGES := allegro-5 allegro_main-5 allegro_primitives-5 allegro_font-5 allegro_ttf-5 allegro_image-5 allegro_audio-5 allegro_acodec-5
 PKG_CFLAGS := $(shell pkg-config --cflags $(PKG_PACKAGES) 2>/dev/null)
 PKG_LIBS   := $(shell pkg-config --libs   $(PKG_PACKAGES) 2>/dev/null)
 

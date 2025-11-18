@@ -7,6 +7,7 @@
 #include <allegro5/allegro_primitives.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_image.h>
 
 #include "game.h"
 
@@ -32,6 +33,18 @@ int main(void)
     if (!display) {
         fprintf(stderr, "al_create_display failed\n");
         return 1;
+    }
+
+    al_init_image_addon();
+
+    ALLEGRO_BITMAP *bg = al_load_bitmap("spaceImage.jpg");
+    if (!bg) {
+        fprintf(stderr, "Warning: failed to load background 'spaceImage.jpg' — using solid color\n");
+    }
+
+    ALLEGRO_BITMAP *ship_bmp = al_load_bitmap("spaceShip.jpg");
+    if (!ship_bmp) {
+        fprintf(stderr, "Warning: failed to load ship image 'spaceShip.jpg' — using primitive ship\n");
     }
 
     ALLEGRO_TIMER *timer = al_create_timer(1.0 / FPS);
@@ -98,7 +111,7 @@ int main(void)
                 if (ship.speed < 0) ship.speed = 0;
             }
 
-            float rad = ship.heading * (3.14159265358979323846f / 180.0f);
+            float rad = (ship.heading - 90.0f) * (3.14159265358979323846f / 180.0f);
             float vx = cosf(rad) * ship.speed;
             float vy = sinf(rad) * ship.speed;
             ship.sx += vx * dt;
@@ -123,30 +136,51 @@ int main(void)
 
         if (redraw && al_is_event_queue_empty(queue)) {
             redraw = false;
-            al_clear_to_color(al_map_rgb(0,0,0));
 
-            ALLEGRO_TRANSFORM t;
-            al_identity_transform(&t);
-            al_rotate_transform(&t, ship.heading * (3.14159265358979323846f/180.0f));
-            al_translate_transform(&t, ship.sx, ship.sy);
-            al_use_transform(&t);
-
-            al_draw_line(-8, 9, 0, -11, ship.color, 3.0f);
-            al_draw_line(0, -11, 8, 9, ship.color, 3.0f);
-            al_draw_line(-6, 4, -1, 4, ship.color, 3.0f);
-            al_draw_line(6, 4, 1, 4, ship.color, 3.0f);
-
-            ALLEGRO_TRANSFORM id;
-            al_identity_transform(&id);
-            al_use_transform(&id);
+            if (bg) {
+                al_draw_scaled_bitmap(bg,
+                                      0, 0,
+                                      al_get_bitmap_width(bg),
+                                      al_get_bitmap_height(bg),
+                                      0, 0,
+                                      SCREEN_W, SCREEN_H,
+                                      0);
+            } else {
+                al_clear_to_color(al_map_rgb(0,0,0));
+            }
 
             draw_asteroid(&ast);
+
+            if (ship_bmp) {
+                float cx = al_get_bitmap_width(ship_bmp) / 2.0f;
+                float cy = al_get_bitmap_height(ship_bmp) / 2.0f;
+                al_draw_rotated_bitmap(ship_bmp, cx, cy, ship.sx, ship.sy, deg_to_rad(ship.heading), 0);
+            } else {
+                ALLEGRO_TRANSFORM t;
+                al_identity_transform(&t);
+                al_rotate_transform(&t, ship.heading * (3.14159265358979323846f/180.0f));
+                al_translate_transform(&t, ship.sx, ship.sy);
+                al_use_transform(&t);
+
+                al_draw_line(-8, 9, 0, -11, ship.color, 3.0f);
+                al_draw_line(0, -11, 8, 9, ship.color, 3.0f);
+                al_draw_line(-6, 4, -1, 4, ship.color, 3.0f);
+                al_draw_line(6, 4, 1, 4, ship.color, 3.0f);
+
+                ALLEGRO_TRANSFORM id;
+                al_identity_transform(&id);
+                al_use_transform(&id);
+            }
 
             al_draw_textf(font, al_map_rgb(255,255,255), 10, 10, 0, "Ship speed: %.1f", ship.speed);
 
             al_flip_display();
         }
     }
+
+    if (bg) al_destroy_bitmap(bg);
+    if (ship_bmp) al_destroy_bitmap(ship_bmp);
+    al_shutdown_image_addon();
 
     al_destroy_timer(timer);
     al_destroy_event_queue(queue);
