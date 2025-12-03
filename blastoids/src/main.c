@@ -95,6 +95,8 @@ int main(void)
             const float SHIP_ACCEL = 200.0f;
             const float SHIP_MAX_SPEED = 220.0f;
             const float SHIP_ROT_SPEED = 180.0f;
+            const float SHIP_FRICTION = 100.0f;
+            const float SHIP_BRAKE = 300.0f;
 
             if (keys[ALLEGRO_KEY_LEFT]) {
                 ship.heading -= SHIP_ROT_SPEED * dt;
@@ -102,13 +104,18 @@ int main(void)
             if (keys[ALLEGRO_KEY_RIGHT]) {
                 ship.heading += SHIP_ROT_SPEED * dt;
             }
+
             if (keys[ALLEGRO_KEY_UP]) {
                 ship.speed += SHIP_ACCEL * dt;
                 if (ship.speed > SHIP_MAX_SPEED) ship.speed = SHIP_MAX_SPEED;
+            } else {
+                ship.speed -= SHIP_FRICTION * dt;
+                if (ship.speed < 0.0f) ship.speed = 0.0f;
             }
+
             if (keys[ALLEGRO_KEY_DOWN]) {
-                ship.speed -= SHIP_ACCEL * dt;
-                if (ship.speed < 0) ship.speed = 0;
+                ship.speed -= SHIP_BRAKE * dt;
+                if (ship.speed < 0.0f) ship.speed = 0.0f;
             }
 
             float rad = (ship.heading - 90.0f) * (3.14159265358979323846f / 180.0f);
