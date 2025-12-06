@@ -1,44 +1,57 @@
 # C Programming Exercises & Learning Journey
 
-This repository tracks my progress as I learn C, working through multiple books and resources. It includes structured exercises, experiments, and starter templates.
+This repository documents my journey learning C through exercises, projects, and experiments. It contains solutions, starter templates, and small projects created while studying multiple books and resources.
 
-## Learning Resources
+Current focus: I am starting The C Programming Language (Kernighan & Ritchie) in addition to the earlier Head First C work. Expect new folders and exercises from K&R alongside existing Head First and Zed Shaw material.
 
-- **[Head First C](https://www.oreilly.com/library/view/head-first-c/9781449335649/)**  
-  My current primary resource for learning C.
-- **[Learn C the Hard Way](https://learncodethehardway.org/c/)**  
-  Previously my main book—I've put it on hold for now, but all my earlier exercises are still included.
-- **[c.org](https://www.c.org/)**  
-  Supplementary practice and reference.
+Why this repo
+- Practice core C fundamentals with small, focused exercises.
+- Keep a history of experiments, false starts, and learning notes.
+- Maintain lightweight, Makefile-driven projects to practice manual build workflows.
+- Improve editing skills (Vim now, planning to move to Neovim later).
 
-## Repository Structure
+Learning resources
+- Head First C — my practical, hands-on resource.
+- The C Programming Language (K&R) — now starting; expect exercises and notes from this book.
+- Learn C the Hard Way (Zed Shaw) — earlier exercises remain in the repo.
+- c.org — supplementary reference.
 
-- **cHeadFirst/**  
-  Solutions, code, and experiments from *Head First C*.
-- **cZedShaw/**  
-  Exercises and code from *Learn C the Hard Way* (Zed Shaw).
-- **exercises/**  
-  (If you have this folder) General exercises, possibly from multiple resources.
-- **playGround/**  
-  Experimental code, quick tests, and messing around.
-- **c-skeleton/**  
-  Starter templates and skeleton code for new C projects.
-- **Makefile**  
-  Basic build system for compiling exercises manually.
+Repository layout (high-level)
+- cBookEx/ — exercises organized by book
+  - theCProgramingLanguage/ — (K&R exercises; new and growing)
+  - cHeadFirst/ — Head First C exercises and experiments
+  - cZedShaw/ — Learn C the Hard Way exercises and liblcthw
+    - c-skeleton/ — starter templates used in Zed's exercises (bin/, src/, tests/)
+    - liblcthw/ — library code and tests used in Zed's projects
+- cProjects/ — small full projects and utilities
+  - blastoids/ (include/, src/)
+  - plantTalk/ (git repo, experimental app)
+  - calculatingCalories/ (bin/, include/, lib/, src/)
+  - intruderDetector/ (bin/, include/, src/)
+- playGround/ — experimental code, quick tests, and one-off files (e.g., ex24.dSYM)
 
-## Development Environment
+Development environment
+- Editor: Vim (working toward Neovim later)
+- Build: Makefile-based per-exercise/project
+- OS: macOS
 
-- **Editor:** Vim (building proficiency with Vim keybindings)
-- **Build:** Makefile-based, manual compilation per exercise
-- **Goal:** Transition to Neovim after *Head First C*
+Quick start — browsing the repo
+- Print top-level directories only:
+  find . -maxdepth 1 -type d -mindepth 1 -printf '%f\n'
+- Print all directories recursively (excluding hidden dirs):
+  find . -type d -not -path '*/\.*' -print
+- If a project has a Makefile:
+  cd path/to/project
+  make
+  # Then run the produced binary (usually in bin/ or project root)
 
-## Motivation
+How I use this repo
+- Work through book chapters and create a folder per chapter or exercise.
+- Add tests and a small Makefile when an exercise grows beyond a single file.
+- Keep experimental code in playGround so core exercises remain tidy.
+- Preserve older Zed Shaw exercises for reference while focusing on K&R and Head First C.
 
-- Explore C fundamentals with minimal tooling
-- Work through multiple books for a broader perspective
-- Practice editor skills alongside language learning
-- Keep a record of experiments, false starts, and personal notes
-
----
-
-Feel free to browse the code, suggest improvements, or use the skeletons for your own C learning journey!
+Contributing / Personal notes
+- This repo is primarily a personal learning log; pulls or edits are welcome if you keep changes small and explain them.
+- I may re-organize folders as I work through K&R — expect some renames/moves.
+- If you clone and work locally, avoid committing large OS-specific artifacts (e.g., *.dSYM). You can add them to .gitignore.
