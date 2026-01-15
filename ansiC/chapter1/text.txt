@@ -118,3 +118,48 @@ Line 117: She learned the names of clouds and their moods.
 Line 118: 	The porch light blinked Morse code to the night.
 Line 119: A lost glove made a new friend at the laundromat.    
 Line 120: He wrote directions that included feelings.
+This is a normal short sentence.
+This is a very long sentence intended to exceed eighty characters so that tools which enforce line length limits will be exercised by it and will show wrapping or warnings.
+Here is another extremely long sentence that goes well past one hundred characters to stress-test editors, linters, and diff viewers which may not like very long lines in plain text files.
+Line with a tab	characters after this word and before this one.
+Line with multiple tabs:	first	tab		tab	end.
+Line with many spaces: word1     word2          word3          word4
+Trailing spaces here.    
+Trailing spaces and a tab at end.	    
+Unclosed double quote at end of line "
+Unclosed single quote at end of line '
+Unclosed bracket at end of line (
+Unclosed brace at end of line {
+Unclosed angle bracket at end of line <
+Mismatched brackets: [this is opened but not closed
+Too many closing braces: this has extra braces } } }
+Backslash at end of line that looks like a line continuation \
+Backslash doubled and left dangling \\
+Backslash followed by space \ and text afterwards
+An unfinished escape: contains a backslash and x\x
+A line with a comment-like sequence /* but no closing */
+A line with a C-style comment opener /* this comment never closes
+A line with a shell-style comment only starting with #
+A line with mixed tabs and spaces:	    word   	    another
+A CRLF marker written literally: contains explicit CRLF sequence \r\n inside the text
+Non-ASCII text: café naïve façade — emojis: 😊🚀
+VeryLongWordWithoutAnySpacesThatShouldForceLineWrappingOrOverflowHandlingInToolsAndEditorsWhichAreNotExpectingSuchAThing
+Sentence with embedded null escape notation: contains \0 in the middle
+Quotes inside: He said "This is a test, and then never closed...
+Quotes nested wrongly: "Outer 'Inner" which is mismatched
+Unfinished parenthesis in math: sum = (a + b + c
+Stray semicolons ; ; ;; ;
+Random punctuation cluster: !!! ??? --- ... ;;::
+Tabs and trailing spaces combined:	tabbed item	and trailing spaces here    	
+A line that looks like code but is plain text: int missing_semicolon = 10
+Multiline illusion: this line looks like it
+continues on the next line without a proper join
+A line with a lone carriage return marker: CR\rhere
+Unicode separators and control chars shown: line\u2028separator and line\u2029separator
+Mixed indentation: leading spaces then a tab and text:    	    indented weirdly
+Unusually spaced URL: https://example.com/this/is/a/very/long/path/that/should/exceed/eighty/characters/for/testing
+Single word with trailing space 
+Single tab only followed by text:	    only a tab before text
+Empty line follows:
+
+A final normal sentence to finish the file.
