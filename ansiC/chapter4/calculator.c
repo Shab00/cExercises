@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include <ctype.h>
 #include <stdlib.h>
 
@@ -28,6 +29,28 @@ int main()
             case NUMBER:
                 push(atof(s));
                 break;
+            case 'p':
+                printf("%.8g\n", val[sp-1]);
+                break;
+            case 'd':
+                if (sp > 0) {
+                    push(val[sp-1]);
+                } else {
+                    printf("error: stack empty, cannot duplicate\n");
+                }
+                break;
+            case 'w':
+                if (sp > 1) {
+                    double temp = val[sp-1];
+                    val[sp-1] = val[sp-2];
+                    val[sp-2] = temp;
+                } else {
+                    printf("error: less than 2 numbers, cannot swap\n");
+                }
+                break;
+            case 'x':
+                sp = 0;
+                break;
             case '+':
                 push(pop() + pop());
                 break;
@@ -45,6 +68,23 @@ int main()
                 } else {
                     printf("error: zero divisor\n");
                 }
+                break;
+            case '%':
+                op2 = pop();
+                if (op2 != 0.0){
+                    push((int)pop() % (int)op2);
+                } else {
+                    printf("error: zero divisor\n");
+                }
+                break;
+            case 's':
+                push(sin(pop()));
+                break;
+            case 'c':
+                push(cos(pop()));
+                break;
+            case '^':
+                push(pow(pop(), pop()));
                 break;
             case '\n':
                 printf("\t%.8g\n", pop());
