@@ -11,11 +11,16 @@
 int getop(char[]);
 int getch(void);
 int sp = 0;
+int var = 0;
+double v = 0;
 void push(double);
 void ungetch(int);
 double pop(void);
+double last_printed = 0.0;
+double var_array[26];
 double val[MAXVAL];
 char buf[BUFSIZE];
+char recentVar;
 int bufp = 0;
 
 int main()
@@ -86,13 +91,28 @@ int main()
             case '^':
                 push(pow(pop(), pop()));
                 break;
+            case '=':
+                pop();
+                if (var >= 'A' && var <= 'Z')
+                    var_array[var - 'A'] = pop();
+                else
+                    printf("error: no variable name\n");
+                break;
             case '\n':
-                printf("\t%.8g\n", pop());
+                v = pop();
+                printf("\t%.8g\n", v);
                 break;
             default:
-                printf("error: unknown command %s\n", s);
+                if (type >= 'A' && type <= 'Z') {
+                    push(var_array[type - 'A']);
+                } else if (type == 'v') {
+                    push(v);
+                } else {
+                    printf("error: unknown command %s\n", s);
+                }
                 break;
         }
+        var = type;
     }
     return 0;
 }
