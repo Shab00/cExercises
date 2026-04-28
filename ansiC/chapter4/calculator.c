@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <math.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -7,21 +8,22 @@
 #define BUFSIZE 100
 #define NUMBER '0'
 #define MAXVAL 100
+#define MAXLINE 1000
 
 int getop(char[]);
-int getch(void);
 int sp = 0;
 int var = 0;
 double v = 0;
 void push(double);
-void ungetch(int);
 double pop(void);
 double last_printed = 0.0;
 double var_array[26];
 double val[MAXVAL];
-char buf[BUFSIZE];
+int my_getline(char s[], int lim);
+int buf = 0;
+int li = 0;
+char line[MAXLINE];
 char recentVar;
-int bufp = 0;
 
 int main()
 {
@@ -138,42 +140,51 @@ double pop(void) {
 int getop(char s[]) 
 {
     int i, c;
-
-    while ((s[0] = c = getch()) == ' ' || c == '\t') {
-        ;
+    while (line[li] == '\0') {
+        if (my_getline(line, MAXLINE) == 0)
+            return EOF;
+        li = 0;
     }
+
+    while ((s[0] = c = line[li++]) == ' ' || c == '\t')
+        ;
     s[1] = '\0';
     if (!isdigit(c) && c != '.') {
         return c;
     }
     i = 0;
-    if (isdigit(c)) {
-        while (isdigit(s[++i] = c = getch())) {
+    if (isdigit(c))
+        while (isdigit(s[++i] = c = line[li++]))
             ;
-        }
-    }
-    if (c == '.') {
-        while (isdigit(s[++i] = c = getch())) {
+
+    if (c == '.')
+        while (isdigit(s[++i] = c = line[li++]))
             ;
-        }
-    }
+
     s[i] = '\0';
-    if (c != EOF) {
-        ungetch(c);
-    }
+
+    if (c != '\0')
+        li--;
+
     return NUMBER;
 }
 
-int getch(void)
+int my_getline(char s[], int lim)
 {
-    return (bufp > 0) ? buf[--bufp] : getchar();
-}
-
-void ungetch(int c)
-{
-    if (bufp >= BUFSIZE) {
-        printf("ungetch: too many characters\n");
-    } else {
-        buf[bufp++] = c;
+    int c, i, j;
+    j = 0;    
+    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i) {
+        if (i < lim - 2) {
+            s[i] = c;
+            ++j;
+        }
     }
+
+    if (c == '\n') {
+        s[j] = c;
+        ++j;
+        ++i;
+    }
+    s[j] = '\0';
+    return i;
 }
