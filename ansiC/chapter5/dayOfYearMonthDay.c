@@ -8,7 +8,7 @@ static char daytab[2][13] = {
 int day_of_year(int year, int month, int day)
 {
     int i, leap;
-
+    char *p;
     if (year < 1)
         return -1;
     leap = year%4 == 0 && year%100 != 0 || year%400 == 0;
@@ -17,14 +17,18 @@ int day_of_year(int year, int month, int day)
     if (day < 1 || day > daytab[leap][month])
         return -1;
 
-    for (i = 1; i < month; i++)
-        day += daytab[leap][i];
+    p = daytab[leap];
+    while (--month) {
+        day += *++p;
+    }
+
     return day;
 }
 
 void month_day(int year, int yearday, int *pmonth, int *pday)
 {
-    int i, leap;
+    char *p;
+    int leap;
 
     if (year < 1) {
         *pmonth = -1;
@@ -37,14 +41,16 @@ void month_day(int year, int yearday, int *pmonth, int *pday)
         *pday = -1;
         return;
     }
-    for (i = 1; yearday > daytab[leap][i]; i++)
-        yearday -= daytab[leap][i];
-    if (i > 12) {
+
+    p = daytab[leap];
+    while (yearday > *++p)
+        yearday -= *p;
+    if ((p - daytab[leap]) > 12) {
         *pmonth = -1;
         *pday = -1;
         return;
     }
-    *pmonth = i;
+    *pmonth = p - daytab[leap];
     *pday = yearday;
 }
 
