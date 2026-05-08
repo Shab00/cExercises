@@ -1,0 +1,55 @@
+# --- Test Case 1: Basic Lines
+orange
+apple
+banana
+pear
+
+# --- Test Case 2: Lines With Leading/Trailing Whitespace
+  zebra
+apple
+  apple
+banana 
+apple  
+
+# --- Test Case 3: Empty Lines and Repeated Lines
+cat
+
+dog
+apple
+
+dog
+
+# --- Test Case 4: Numeric and Special Characters
+42
+100
+-9
+hello
+$money
+
+# --- Test Case 5: Very Long Lines
+this is a very very long line for testing purposes
+short
+medium length here
+
+# --- Test Case 6: Uppercase and Lowercase
+apple
+Apple
+banana
+Banana
+cat
+Cat
+
+# --- Test Case 7: Only Empty Lines
+
+
+# --- Test Case 8: Stress Test (first 10 numbers as an example, replace with 5000 as needed)
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
