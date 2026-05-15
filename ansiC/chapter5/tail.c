@@ -20,55 +20,38 @@ int main(int argc, char *argv[]) {
     int nlines = 0;
     int first, i, len;
 
-    // --- Parse arguments for -n ---
-    /*
-        if argc == 1: 
-            use default n
-        else if argc == 2 and argv[1] starts with '-': 
-            parse n from argv[1]
-        else: 
-            error and usage
-    */
     if (argc == 1) {
-        n = DEFAULT_N 
+        n = DEFAULT_N; 
     } else if (argc == 2 && argv[1][0] == '-') {
-        n = argv[1];
+        n = atoi(argv[1] + 1);
+        if (n < 1) {
+            error("invalid value n");
+        }
     } else {
-        error(argv[1]);
+        error("usage: wrong");
     }
-    // --- Initialize lines[] to NULL ---
-    /*
-        For robustness. (not strictly required)
-    */
 
-    // --- Allocate buffer and initialize pointers ---
-    /*
-        (buffer is already allocated statically above)
-    */
+    for (i = 0; i < MAXLINES; i++) {
+        lines[i] = NULL;
+    }
+    while ((len = getline_custom(line, MAXLEN)) > 0) {
+        if (p + len + 1 >= bufend)
+            p = buffer;
+        lines[last] = p;
+        strcpy(p, line);
+        p += len + 1;
+        last = (last + 1) % MAXLINES;
+        nlines++;
+    }
 
-    // --- Input Loop: Read each line until EOF ---
-    /*
-        while (next line read into line[]):
-            - If not enough buffer left, wrap p to buffer start
-            - Save pointer in lines[last]
-            - Copy line[] into buffer at p
-            - Increment (and wrap) last in circular fashion (last = (last+1) % MAXLINES)
-            - Advance pointer p by line length
-            - Increment nlines
-    */
+    if (n > nlines)
+        n = nlines;
+    first = last - n;
+    if (first < 0)
+        first += MAXLINES;
 
-    // --- Calculate number of lines to print & first line index ---
-    /*
-        n = min(n, nlines)
-        first = last - n
-        if (first < 0) first += MAXLINES
-    */
-
-    // --- Print last n lines in correct order ---
-    /*
-        for i = first, count = 0; count < n; i = (i + 1) % MAXLINES:
-            print lines[i]
-    */
+    for (i = first; n-- > 0; i = (i + 1) % MAXLINES)
+        printf("%s", lines[i]);
 
     return 0;
 }
