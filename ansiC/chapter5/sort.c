@@ -4,29 +4,46 @@
 
 #define MAXLINES 5000
 #define MAXLEN 1000
+#define NUMERIC 1 
+#define DECR 2
 
 char *lineptr[MAXLINES];
 
-int readlines(char *lineptr[], int nlines);
-void writelines(char *lineptr[], int nlines);
+int readlines(char *lineptr[], int maxlines);
+void writelines(char *lineptr[], int nlines, int decr);
 
 void my_qsort(void *lineptr[], int left, int right, int (*comp)(void *, void *));
-
 int numcmp(const char *, const char *);
 void swap(void *v[], int i, int j);
 
 int main(int argc, char *argv[])
 {
     int nlines;
-    int numeric = 0;
+    int option = 0;
 
-    if (argc > 1 && strcmp(argv[1], "-n") == 0) {
-        numeric = 1;
+    while (--argc > 0 && (*++argv)[0] == '-') {
+        int c;
+        char *arg = *argv;
+        while ((c = *++arg)) {
+            switch (c) {
+                case 'n':
+                    option |= NUMERIC; // numeric sort
+                    break;
+                case 'r':
+                    option |= DECR;    // reverse order
+                    break;
+                default:
+                    printf("sort: illegal option %c\n", c);
+                    printf("Usage: sort -n -r\n");
+                    exit(1);
+            }
+        }
     }
-    if ((nlines = readlines(lineptr, MAXLINES)) >= 1) {
+
+    if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
         my_qsort((void **) lineptr, 0, nlines - 1,
-                 (int (*)(void *, void *))(numeric ? numcmp : strcmp));
-        writelines(lineptr, nlines);
+            (int (*)(void *, void *))(option & NUMERIC ? numcmp : strcmp));
+        writelines(lineptr, nlines, option & DECR);
         return 0;
     } else {
         printf("input too big to sort\n");
@@ -92,8 +109,13 @@ int readlines(char *lineptr[], int maxlines) {
     return nlines;
 }
 
-void writelines(char *lineptr[], int nlines) {
+void writelines(char *lineptr[], int nlines, int decr) {
     int i;
-    for (i = 0; i < nlines; i++)
-        printf("%s", lineptr[i]);
+    if (decr) {
+        for (i = nlines - 1; i >= 0; i--)
+            printf("%s", lineptr[i]);
+    } else {
+        for (i = 0; i < nlines; i++)
+            printf("%s", lineptr[i]);
+    }
 }
