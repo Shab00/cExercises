@@ -11,7 +11,7 @@ struct queue {
 };
 
 struct queue *queue_create(void) {
-    struct list* newQueue = malloc(sizeof(struct queue));    
+    struct queue* newQueue = malloc(sizeof(struct queue));    
     if (newQueue == NULL) {
         return NULL;
     }
@@ -30,7 +30,7 @@ size_t queue_count(const struct queue *queue) {
         return 0;
     }
     
-    struct queue_node* walker = list->first;
+    struct queue_node* walker = queue->first;
     size_t count = 0;
 
     while (walker != NULL) {
@@ -63,7 +63,7 @@ void queue_enqueue(struct queue *queue, q_data_t item_data) {
 
 
 bool queue_dequeue(struct queue *queue, q_data_t *out) {
-    struct queue_node* beginning = list->first;
+    struct queue_node* beginning = queue->first;
     struct queue_node* survivor;
     q_data_t localData = 0;
 
@@ -75,11 +75,11 @@ bool queue_dequeue(struct queue *queue, q_data_t *out) {
     survivor = beginning->next;
 
     if (survivor== NULL) {
-        list->first = NULL;
-        list->last = NULL;
+        queue->first = NULL;
+        queue->last = NULL;
     } else {
         survivor->prev = NULL;
-        list->first = survivor;
+        queue->first = survivor;
     }
     
     free(beginning);
