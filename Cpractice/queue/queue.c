@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 struct queue_node {
-   struct queue_node *prev, *next;
+   struct queue_node *next;
    q_data_t data;
 };
 
@@ -47,7 +47,10 @@ void queue_enqueue(struct queue *queue, q_data_t item_data) {
     struct queue_node* end = queue->last;
     struct queue_node* newItem = malloc(sizeof(struct queue_node));
 
-    newItem->prev = end;
+    if (newItem == NULL) {
+        return;
+    }
+
     newItem->next = NULL;
     newItem->data = item_data;
 
@@ -65,26 +68,24 @@ void queue_enqueue(struct queue *queue, q_data_t item_data) {
 bool queue_dequeue(struct queue *queue, q_data_t *out) {
     struct queue_node* beginning = queue->first;
     struct queue_node* survivor;
-    q_data_t localData = 0;
 
     if (beginning == NULL) {
         return false;
     }
 
-    localData = beginning->data;
+    *out = beginning->data;
     survivor = beginning->next;
 
     if (survivor== NULL) {
         queue->first = NULL;
         queue->last = NULL;
     } else {
-        survivor->prev = NULL;
         queue->first = survivor;
     }
     
     free(beginning);
 
-    return localData;
+    return true;
 }
 
 void queue_destroy(struct queue *queue) {
@@ -109,8 +110,22 @@ void queue_destroy(struct queue *queue) {
 
 bool queue_peek(const struct queue *queue, q_data_t *out) {
 
+    struct queue_node* beginning = queue->first;
+
+    if (beginning == NULL) {
+        return false;
+    }
+
+    *out = beginning->data;
+
+    return true;
 }
 
 bool queue_is_empty(const struct queue *queue) {
+    if (queue->first == NULL) {
+        return true;
+    }
+
+    return false;
 
 }
