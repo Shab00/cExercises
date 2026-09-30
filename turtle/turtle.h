@@ -20,4 +20,18 @@ void turtle_print(const struct turtle *t);
 
 void turtle_execute(struct turtle *t, const char *line);
 
+void turtle_pen(struct turtle *t, int n);
+
+void turtle_up(struct turtle *t);
+
+void turtle_down(struct turtle *t);
+
+void turtle_north(struct turtle *t, int n);
+
+void turtle_south(struct turtle *t, int n);
+
+void turtle_east(struct turtle *t, int n);
+
+void turtle_west(struct turtle *t, int n);
+
 #endif

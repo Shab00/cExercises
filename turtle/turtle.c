@@ -111,3 +111,35 @@ void turtle_execute(struct turtle *t, const char *line) {
     }
 
 }
+
+void turtle_pen(struct turtle *t, int n) {
+    if (n < 1 || n > 3) {
+        fprintf(stderr, "Error: Pen number %d is out of bounds (must be 1-3).\n", n);
+        return;
+    }
+    t->pen_number = n;
+}
+
+void turtle_up(struct turtle *t) {
+    t->pen_down = false;
+}
+
+void turtle_down(struct turtle *t) {
+    t->pen_down = true;
+}
+
+void turtle_north(struct turtle *t, int n) {
+    move_turtle(t, 0, -1, n);
+}
+
+void turtle_south(struct turtle *t, int n) {
+    move_turtle(t, 0, +1, n);
+}
+
+void turtle_east(struct turtle *t, int n) {
+    move_turtle(t, 1, 0, n);
+}
+
+void turtle_west(struct turtle *t, int n) {
+    move_turtle(t, -1, 0, n);
+}
