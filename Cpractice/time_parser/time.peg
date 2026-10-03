@@ -1,0 +1,29 @@
+# Entry point: a time is either a 24-hour form or a 12-hour form.
+# The !. asserts we consumed the entire string — no trailing garbage.
+time <- time24 end
+      / time12 end
+end  <- "\n"? !.
+
+# 24-hour: HH:MM. No am/pm.
+time24   <- hour24 ":" minute
+
+# 12-hour: either HH:MM followed by am/pm, or just HH followed by am/pm.
+time12   <- hour12 ":" minute ampm
+          / hour12 ampm
+
+# 24-hour hour: 00-23, or a single digit 0-9 (for inputs like "3:16").
+# Order matters — longest alternatives first, so "23" matches before "2".
+hour24   <- [01] [0-9]
+          / "2" [0-3]
+          / [0-9]
+
+# Minutes: 00-59. Always two digits.
+minute   <- [0-5] [0-9]
+
+# 12-hour hour: 1-12. Either a single digit 1-9, or "1" followed by 0-2.
+hour12   <- "1" [0-2]
+          / [1-9]
+
+# am or pm, lowercase.
+ampm     <- "am"
+          / "pm"
