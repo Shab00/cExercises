@@ -5,6 +5,7 @@ typedef struct {
     char name[50];
     char phone[15];
     char email[50];
+    char address[100];
 } Contact;
 
 typedef struct {
@@ -26,4 +27,8 @@ int storage_save_to_file(const AddressBook *book, const char *filename);
 
 int storage_load_from_file(AddressBook *book, const char *filename);
 
-#endif // ADDERSSBOOK_H
+int storage_save_to_json(const AddressBook *book, const char *filename);
+
+int storage_load_from_json(AddressBook *book, const char *filename);
+
+#endif // ADDRESSBOOK_H

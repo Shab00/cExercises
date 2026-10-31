@@ -16,14 +16,17 @@ int main()
     strcpy(personOne.name, "Alice");
     strcpy(personOne.phone, "07940161559");
     strcpy(personOne.email, "Al@a.com");
+    strcpy(personOne.address, "StreetOne");
     
     strcpy(personTwo.name, "Tom");
     strcpy(personTwo.phone, "07770325022");
     strcpy(personTwo.email, "To@t.com");
+    strcpy(personTwo.address, "StreetTwo");
     
     strcpy(personThree.name, "Dick");
     strcpy(personThree.phone, "07770415033");
     strcpy(personThree.email, "Di@d.com");
+    strcpy(personThree.address, "StreetThree");
     
     contact_add(&book, &personOne);
     contact_add(&book, &personTwo);
@@ -41,6 +44,11 @@ int main()
     storage_save_to_file(&book, "test.db");
     book_init(&book);
     storage_load_from_file(&book, "test.db");
+    contact_list_all(&book);
+
+    storage_save_to_json(&book, "test.json");
+    book_init(&book);
+    storage_load_from_json(&book, "test.json");
     contact_list_all(&book);
 
     return 0;

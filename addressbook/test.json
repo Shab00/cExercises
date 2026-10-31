@@ -1,0 +1,16 @@
+{
+  "contacts": [
+    {
+      "name": "Alice",
+      "phone": "07940161559",
+      "email": "Al@a.com",
+      "address": "StreetOne"
+    },
+    {
+      "name": "Dick",
+      "phone": "07770415033",
+      "email": "Di@d.com",
+      "address": "StreetThree"
+    }
+  ]
+}

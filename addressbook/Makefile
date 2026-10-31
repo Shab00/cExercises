@@ -1,6 +1,8 @@
 # Compiler and Flags
 CC = gcc
-CFLAGS = -Iinclude -Wall -Wextra -Werror -g -std=c11
+BREW_PREFIX = $(shell brew --prefix)
+CFLAGS = -Iinclude -I$(BREW_PREFIX)/include -Wall -Wextra -Werror -g -std=c11
+LDFLAGS = -L$(BREW_PREFIX)/lib -lcjson
 
 # Directories
 SRC_DIR = src
@@ -15,7 +17,7 @@ all: $(EXEC)
 
 $(EXEC): $(OBJS)
 	mkdir -p $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $@ $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LDFLAGS)
 
 $(SRC_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
